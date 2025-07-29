@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\CampaignStatus;
 
 class Campaign extends Model
 {
@@ -19,15 +20,13 @@ class Campaign extends Model
     protected $fillable = [
         'title',
         'description',
+        'category',
         'goal_amount',
         'current_amount',
         'image_url',
         'status',
         'start_date',
         'end_date',
-        'is_featured',
-        'view_count',
-        'metadata',
         'created_by',
     ];
 
@@ -51,7 +50,7 @@ class Campaign extends Model
     /**
      * Get the user who created the campaign.
      */
-    public function creator(): BelongsTo
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
     }
@@ -81,7 +80,7 @@ class Campaign extends Model
      */
     public function isActive(): bool
     {
-        return $this->status === 'active';
+        return $this->status === CampaignStatus::ACTIVE->value;
     }
 
     /**

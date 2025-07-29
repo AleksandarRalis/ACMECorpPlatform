@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->decimal('amount', 15, 2)->comment('Donation amount');
             $table->text('message')->nullable()->comment('Donor message');
-            $table->boolean('is_anonymous')->default(false)->comment('Anonymous donation flag');
             
             // Relationships
             $table->foreignId('campaign_id')->constrained('campaigns')->onDelete('cascade')->comment('Campaign being donated to');

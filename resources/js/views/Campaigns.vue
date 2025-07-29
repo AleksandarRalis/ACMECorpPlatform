@@ -87,9 +87,34 @@
       </div>
     </div>
 
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <div class="text-gray-500">
+        <svg class="animate-spin mx-auto h-8 w-8 text-blue-600 mb-4" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-600">Loading campaigns...</p>
+      </div>
+    </div>
+
     <!-- Campaigns Grid -->
-    <div v-if="filteredCampaigns.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-else-if="filteredCampaigns.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div v-for="campaign in filteredCampaigns" :key="campaign.id" class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Campaign Image -->
+        <div class="h-48 bg-gray-200 overflow-hidden">
+          <img 
+            v-if="campaign.image_url" 
+            :src="campaign.image_url" 
+            :alt="campaign.title"
+            class="w-full h-full object-cover"
+          />
+          <div v-else class="w-full h-full flex items-center justify-center bg-gray-100">
+            <svg class="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
         <div class="p-6">
           <div class="flex justify-between items-start mb-2">
             <h3 class="text-lg font-semibold text-gray-900">{{ campaign.title }}</h3>
@@ -102,15 +127,17 @@
           <div class="mb-4">
             <div class="flex justify-between text-sm text-gray-500 mb-1">
               <span>Progress</span>
-              <span>${{ campaign.raised.toLocaleString() }}/${{ campaign.goal.toLocaleString() }}</span>
+              <span>${{ campaign.current_amount.toLocaleString() }}/${{ campaign.goal_amount.toLocaleString() }}</span>
             </div>
             <div class="w-full bg-gray-200 rounded-full h-2">
-              <div class="bg-green-600 h-2 rounded-full" :style="{ width: progressPercentage(campaign) + '%' }"></div>
+              <div class="bg-green-600 h-2 rounded-full" :style="{ width: campaign.progress_percentage + '%' }"></div>
             </div>
           </div>
 
           <div class="flex justify-between items-center">
-            <span class="text-sm text-gray-500">{{ campaign.daysLeft }} days left</span>
+            <span class="text-sm text-gray-500">
+              {{ campaign.days_left }} days left
+            </span>
             <router-link :to="`/campaigns/${campaign.id}`" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
               View Details
             </router-link>
@@ -133,6 +160,7 @@
 </template>
 
 <script setup>
+import axios from 'axios';
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -140,69 +168,34 @@ const route = useRoute();
 const searchQuery = ref('');
 const selectedCategory = ref('');
 const sortBy = ref('newest');
+const campaigns = ref([]);
+const loading = ref(false);
 
 // Handle search query from URL
-onMounted(() => {
+onMounted(async () => {
   if (route.query.search) {
     searchQuery.value = route.query.search;
   }
+  
+  // Fetch campaigns from API
+  await fetchCampaigns();
 });
 
-const campaigns = ref([
-  {
-    id: 1,
-    title: 'Local Food Bank Support',
-    description: 'Help provide meals for families in need in our local community.',
-    category: 'poverty',
-    goal: 10000,
-    raised: 6500,
-    daysLeft: 15,
-    createdAt: '2024-01-15'
-  },
-  {
-    id: 2,
-    title: 'Environmental Cleanup Initiative',
-    description: 'Support local environmental conservation and cleanup efforts.',
-    category: 'environment',
-    goal: 5000,
-    raised: 3200,
-    daysLeft: 8,
-    createdAt: '2024-01-10'
-  },
-  {
-    id: 3,
-    title: 'Education for All',
-    description: 'Provide educational resources and supplies for underprivileged children.',
-    category: 'education',
-    goal: 15000,
-    raised: 12000,
-    daysLeft: 22,
-    createdAt: '2024-01-20'
-  },
-  {
-    id: 4,
-    title: 'Animal Shelter Support',
-    description: 'Help provide care and shelter for abandoned animals in our community.',
-    category: 'animals',
-    goal: 8000,
-    raised: 4500,
-    daysLeft: 12,
-    createdAt: '2024-01-18'
-  },
-  {
-    id: 5,
-    title: 'Community Health Clinic',
-    description: 'Support free health services for low-income families.',
-    category: 'health',
-    goal: 20000,
-    raised: 18000,
-    daysLeft: 5,
-    createdAt: '2024-01-05'
+const fetchCampaigns = async () => {
+  loading.value = true;
+  try {
+    const response = await axios.get('/api/campaigns');
+    campaigns.value = response.data.data
+  } catch (error) {
+    console.error('Error fetching campaigns:', error);
+    campaigns.value = [];
+  } finally {
+    loading.value = false;
   }
-]);
+};
 
 const filteredCampaigns = computed(() => {
-  let filtered = campaigns.value;
+  let filtered = campaigns.value || [];
 
   // Search by title and description
   if (searchQuery.value) {
@@ -222,17 +215,17 @@ const filteredCampaigns = computed(() => {
   filtered = [...filtered].sort((a, b) => {
     switch (sortBy.value) {
       case 'newest':
-        return new Date(b.createdAt) - new Date(a.createdAt);
+        return new Date(b.created_at) - new Date(a.created_at);
       case 'oldest':
-        return new Date(a.createdAt) - new Date(b.createdAt);
+        return new Date(a.created_at) - new Date(b.created_at);
       case 'goal-high':
-        return b.goal - a.goal;
+        return b.goal_amount - a.goal_amount;
       case 'goal-low':
-        return a.goal - b.goal;
+        return a.goal_amount - b.goal_amount;
       case 'progress':
-        return (b.raised / b.goal) - (a.raised / a.goal);
+        return (b.current_amount / b.goal_amount) - (a.current_amount / a.goal_amount);
       case 'deadline':
-        return a.daysLeft - b.daysLeft;
+        return daysLeft(a) - daysLeft(b);
       default:
         return 0;
     }
@@ -242,7 +235,20 @@ const filteredCampaigns = computed(() => {
 });
 
 const progressPercentage = (campaign) => {
-  return Math.min((campaign.raised / campaign.goal) * 100, 100);
+  return Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100);
+};
+
+const daysLeft = (campaign) => {
+  const today = new Date();
+  const endDate = new Date(campaign.end_date);
+  const timeDiff = endDate.getTime() - today.getTime();
+  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  
+  if (daysDiff < 0) {
+    return 0;
+  }
+  
+  return daysDiff;
 };
 
 const clearFilters = () => {

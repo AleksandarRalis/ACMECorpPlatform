@@ -8,6 +8,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Enums\UserRole;
 
 class User extends Authenticatable
 {
@@ -88,7 +89,7 @@ class User extends Authenticatable
      */
     public function isAdmin(): bool
     {
-        return $this->role && $this->role->name === 'admin';
+        return $this->role && $this->role->name === UserRole::ADMIN->value;
     }
 
     /**

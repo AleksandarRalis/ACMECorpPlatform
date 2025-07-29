@@ -8,6 +8,9 @@ use App\Models\User;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\DonationDetail;
+use App\Enums\UserRole;
+use App\Enums\CampaignStatus;
+use App\Enums\PaymentStatus;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 
@@ -20,14 +23,14 @@ class DatabaseSeeder extends Seeder
     {
         // Create roles
         $adminRole = Role::create([
-            'name' => 'admin',
-            'display_name' => 'Administrator',
+            'name' => UserRole::ADMIN->value,
+            'display_name' => UserRole::ADMIN->displayName(),
             'description' => 'Full system administrator with all permissions',
         ]);
 
         $employeeRole = Role::create([
-            'name' => 'employee',
-            'display_name' => 'Employee',
+            'name' => UserRole::EMPLOYEE->value,
+            'display_name' => UserRole::EMPLOYEE->displayName(),
             'description' => 'Regular employee with basic permissions',
         ]);
 
@@ -103,7 +106,7 @@ class DatabaseSeeder extends Seeder
                 'goal_amount' => 50000.00,
                 'current_amount' => 12500.00,
                 'image_url' => 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800',
-                'status' => 'active',
+                'status' => CampaignStatus::ACTIVE->value,
                 'start_date' => now()->subDays(30),
                 'end_date' => now()->addDays(60),
                 'created_by' => User::where('email', 'john.doe@acmecorp.com')->first()->id,
@@ -115,7 +118,7 @@ class DatabaseSeeder extends Seeder
                 'goal_amount' => 30000.00,
                 'current_amount' => 8500.00,
                 'image_url' => 'https://images.unsplash.com/photo-1523240794102-9ebd8deeb8f1?w=800',
-                'status' => 'active',
+                'status' => CampaignStatus::ACTIVE->value,
                 'start_date' => now()->subDays(15),
                 'end_date' => now()->addDays(45),
                 'created_by' => User::where('email', 'jane.smith@acmecorp.com')->first()->id,
@@ -127,7 +130,7 @@ class DatabaseSeeder extends Seeder
                 'goal_amount' => 25000.00,
                 'current_amount' => 18200.00,
                 'image_url' => 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800',
-                'status' => 'active',
+                'status' => CampaignStatus::ACTIVE->value,
                 'start_date' => now()->subDays(45),
                 'end_date' => now()->addDays(30),
                 'created_by' => User::where('email', 'mike.johnson@acmecorp.com')->first()->id,
@@ -175,7 +178,7 @@ class DatabaseSeeder extends Seeder
                 'donation_id' => $donation->id,
                 'payment_method' => 'dummy',
                 'transaction_id' => 'TXN_' . uniqid(),
-                'payment_status' => 'completed',
+                'payment_status' => PaymentStatus::COMPLETED->value,
                 'gateway_response' => json_encode(['status' => 'success']),
                 'metadata' => [
                     'processor' => 'dummy',

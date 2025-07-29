@@ -49,8 +49,6 @@ async function handleLogin() {
     const { token, user } = response.data;
     auth.setToken(token);
     auth.setUser(user);
-    // Set axios default header for future requests
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     router.push('/');
   } catch (e) {
     if (e.response && e.response.data && e.response.data.message) {

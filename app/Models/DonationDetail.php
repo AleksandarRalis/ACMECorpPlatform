@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Enums\PaymentStatus;
 
 class DonationDetail extends Model
 {
@@ -63,7 +64,7 @@ class DonationDetail extends Model
      */
     public function isSuccessful(): bool
     {
-        return $this->payment_status === 'completed';
+        return $this->payment_status === PaymentStatus::COMPLETED->value;
     }
 
     /**
@@ -71,7 +72,7 @@ class DonationDetail extends Model
      */
     public function isFailed(): bool
     {
-        return $this->payment_status === 'failed';
+        return $this->payment_status === PaymentStatus::FAILED->value;
     }
 
     /**
@@ -79,6 +80,6 @@ class DonationDetail extends Model
      */
     public function isPending(): bool
     {
-        return $this->payment_status === 'pending';
+        return $this->payment_status === PaymentStatus::PENDING->value;
     }
 } 

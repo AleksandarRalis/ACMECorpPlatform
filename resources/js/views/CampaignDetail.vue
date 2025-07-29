@@ -2,6 +2,24 @@
   <div class="px-4 py-6 sm:px-0">
     <div v-if="campaign" class="max-w-4xl mx-auto">
       <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <!-- Campaign Hero Image -->
+        <div class="h-64 md:h-80 bg-gray-200 overflow-hidden">
+          <img 
+            v-if="campaign.image_url" 
+            :src="campaign.image_url" 
+            :alt="campaign.title"
+            class="w-full h-full object-cover"
+          />
+          <div v-else class="w-full h-full flex items-center justify-center bg-gray-100">
+            <div class="text-center">
+              <svg class="h-16 w-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p class="text-gray-500 text-sm">No image available</p>
+            </div>
+          </div>
+        </div>
+        
         <div class="p-8">
           <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ campaign.title }}</h1>
           <p class="text-gray-600 text-lg mb-6">{{ campaign.description }}</p>
@@ -12,11 +30,11 @@
               <div class="mb-4">
                 <div class="flex justify-between text-sm text-gray-500 mb-1">
                   <span>Raised</span>
-                  <span>${{ campaign.raised.toLocaleString() }}</span>
+                  <span>${{ campaign.current_amount.toLocaleString() }}</span>
                 </div>
                 <div class="flex justify-between text-sm text-gray-500 mb-1">
                   <span>Goal</span>
-                  <span>${{ campaign.goal.toLocaleString() }}</span>
+                  <span>${{ campaign.goal_amount.toLocaleString() }}</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
                   <div class="bg-green-600 h-3 rounded-full" :style="{ width: progressPercentage + '%' }"></div>
@@ -27,8 +45,8 @@
               </div>
               
               <div class="text-sm text-gray-500">
-                <p>{{ campaign.daysLeft }} days remaining</p>
-                <p>{{ campaign.donors }} donors so far</p>
+                <p>{{ campaign.days_left }} days remaining</p>
+                <!-- <p>{{ campaign.donors }} donors so far</p> -->
               </div>
             </div>
             
@@ -82,7 +100,7 @@
             </div>
           </div>
           
-          <div class="border-t border-gray-200 pt-6">
+          <!-- <div class="border-t border-gray-200 pt-6">
             <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Donations</h3>
             <div class="space-y-3">
               <div v-for="donation in campaign.recentDonations" :key="donation.id" class="flex justify-between items-center py-2">
@@ -93,7 +111,7 @@
                 <span class="font-semibold text-green-600">${{ donation.amount }}</span>
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -103,6 +121,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 const route = useRoute();
 const campaign = ref(null);
@@ -112,7 +131,7 @@ const donationMessage = ref('');
 
 const progressPercentage = computed(() => {
   if (!campaign.value) return 0;
-  return Math.min((campaign.value.raised / campaign.value.goal) * 100, 100);
+  return campaign.value.progress_percentage || 0;
 });
 
 const makeDonation = () => {
@@ -131,21 +150,12 @@ const makeDonation = () => {
   donationMessage.value = '';
 };
 
-onMounted(() => {
-  // Mock campaign data - in real app, fetch from API
-  campaign.value = {
-    id: route.params.id,
-    title: 'Local Food Bank Support',
-    description: 'Help provide meals for families in need in our local community. This campaign aims to raise funds to support our local food bank in providing nutritious meals to families facing food insecurity.',
-    goal: 10000,
-    raised: 6500,
-    daysLeft: 15,
-    donors: 127,
-    recentDonations: [
-      { id: 1, name: 'John Smith', amount: 100, message: 'Happy to support this important cause!' },
-      { id: 2, name: 'Sarah Johnson', amount: 50, message: 'Every little bit helps.' },
-      { id: 3, name: 'Mike Davis', amount: 200, message: 'Great initiative!' }
-    ]
-  };
+onMounted(async () => {
+  try {
+    const response = await axios.get(`/api/campaigns/${route.params.id}`);
+    campaign.value = response.data;
+  } catch (error) {
+    console.error('Error fetching campaign:', error);
+  }
 });
 </script> 

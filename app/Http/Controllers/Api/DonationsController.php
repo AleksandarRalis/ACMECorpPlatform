@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class DonationController extends Controller
+class DonationsController extends Controller
 {
     /**
      * Display a listing of donations for a campaign.
