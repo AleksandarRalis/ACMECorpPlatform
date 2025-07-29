@@ -1,154 +1,275 @@
 # ACME Corp CSR Platform
 
-A Corporate Social Responsibility (CSR) donation platform for employee engagement and community involvement.
+A Corporate Social Responsibility (CSR) platform built for ACME Corp to enable employee engagement and community involvement through fundraising campaigns and donations.
 
-## 🎯 Project Overview
+## 🚀 Features
 
-ACME Corp is an international company with 20K+ employees implementing a CSR initiative to enhance employee engagement through charitable donations and community involvement.
-
-### Key Features
-- **Employee Authentication** - Secure login for employees
-- **Campaign Management** - Create, manage, and search fundraising campaigns
-- **Donation System** - Donate to causes with confirmation
-- **Admin Panel** - Dashboard and application management
-- **Modern UI** - Built with Vue.js 3 and Tailwind CSS
+- **Employee Authentication**: Secure login/registration with Laravel Sanctum
+- **Campaign Management**: Create, manage, and search fundraising campaigns
+- **Donation System**: Make donations with payment processing abstraction
+- **Admin Panel**: Restricted administration section for application management
+- **Role-Based Access**: Admin and Employee roles with appropriate permissions
+- **Modern UI**: Vue.js 3 frontend with Tailwind CSS
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Laravel 12 (Latest PHP framework)
-- **Frontend**: Vue.js 3 with Composition API
-- **Database**: MySQL/MariaDB
-- **Styling**: Tailwind CSS
-- **Build Tool**: Vite
-- **State Management**: Pinia
-- **Routing**: Vue Router
+### Backend
+- **PHP 8.2+** with Laravel 11
+- **MySQL** database
+- **Laravel Sanctum** for API authentication
+- **Composer** for dependency management
+- **PHPStan** (Level 8) for static analysis
 
-## 🚀 Quick Setup
+### Frontend
+- **Vue.js 3** with Composition API
+- **Vue Router** for client-side routing
+- **Pinia** for state management
+- **Tailwind CSS** for styling
+- **Vite** for build tooling
+- **Axios** for HTTP requests
 
-### Prerequisites
-- PHP 8.2+
+### Development Tools
+- **Pest** for testing
+- **PHPStan** for static analysis
+- **Composer** for PHP dependencies
+- **NPM** for Node.js dependencies
+
+## 📋 Prerequisites
+
+- PHP 8.2 or higher
 - Composer
-- Node.js 18+
-- MySQL/MariaDB
+- Node.js 18+ and NPM
+- MySQL 8.0+
+- Git
 
-### Installation
+## 🚀 Quick Start
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd AcmeCORP
-   ```
+### 1. Clone the Repository
+```bash
+git clone <your-repo-url>
+cd AcmeCORP
+```
 
-2. **Run the setup script**
-   ```bash
-   ./setup.sh
-   ```
+### 2. Install Dependencies
+```bash
+# Install PHP dependencies
+composer install
 
-   This script will:
-   - Install all dependencies
-   - Configure MySQL database
-   - Set up environment variables
-   - Run database migrations
-   - Build frontend assets
+# Install Node.js dependencies
+npm install
+```
 
-3. **Start the servers**
-   ```bash
-   # Terminal 1: Start Laravel server
-   php artisan serve
-   
-   # Terminal 2: Start Vite dev server
-   npm run dev
-   ```
+### 3. Environment Setup
+```bash
+# Copy environment file
+cp .env.example .env
 
-4. **Open your browser**
-   Navigate to `http://127.0.0.1:8000`
+# Generate application key
+php artisan key:generate
+```
+
+### 4. Database Configuration
+Edit `.env` file and set your database credentials:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ACMECorp
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+### 5. Database Setup
+```bash
+# Run migrations
+php artisan migrate
+
+# Seed the database with sample data
+php artisan db:seed
+```
+
+### 6. Build Frontend Assets
+```bash
+# Development
+npm run dev
+
+# Production
+npm run build
+```
+
+### 7. Start the Application
+```bash
+# Start Laravel development server
+php artisan serve
+
+# In another terminal, start Vite dev server (if needed)
+npm run dev
+```
+
+Visit `http://localhost:8000` to access the application.
+
+## 👥 Default Users
+
+After running the seeder, you'll have these default users:
+
+### Admin User
+- **Email**: `admin@acmecorp.com`
+- **Password**: `password`
+- **Role**: Admin
+
+### Employee Users
+- **Email**: `john.doe@acmecorp.com`
+- **Password**: `password`
+- **Role**: Employee
+
+- **Email**: `jane.smith@acmecorp.com`
+- **Password**: `password`
+- **Role**: Employee
+
+- **Email**: `mike.johnson@acmecorp.com`
+- **Password**: `password`
+- **Role**: Employee
+
+## 🏗️ Architecture
+
+### Backend Architecture
+- **MVC Pattern**: Models, Views (API), Controllers
+- **Repository Pattern**: Service layer for business logic
+- **Strategy Pattern**: Payment processing abstraction
+- **Eloquent ORM**: Database relationships and queries
+- **API Resources**: Structured JSON responses
+
+### Frontend Architecture
+- **Component-Based**: Reusable Vue components
+- **State Management**: Pinia stores for global state
+- **Route Guards**: Authentication-based navigation
+- **API Integration**: Axios for backend communication
+
+### Database Design
+- **Users**: Employee information and authentication
+- **Roles**: Role-based access control
+- **Campaigns**: Fundraising campaign details
+- **Donations**: Donation records
+- **Donation Details**: Payment processing information
+
+## 🔐 Authentication & Authorization
+
+- **Laravel Sanctum**: Token-based API authentication
+- **Role-Based Access**: Admin and Employee roles
+- **Route Protection**: Middleware-based route guards
+- **Token Management**: Automatic token cleanup on logout
+
+## 💳 Payment System
+
+The platform uses a **Strategy Pattern** for payment processing:
+
+- **PaymentProcessorInterface**: Abstract payment processor
+- **DummyPaymentProcessor**: MVP implementation for testing
+- **PaymentStrategy**: Strategy pattern implementation
+- **PaymentResult**: DTO for payment responses
+
+This design allows easy integration of real payment gateways (Stripe, PayPal, etc.) in the future.
+
+## 🧪 Testing
+
+```bash
+# Run PHP tests with Pest
+./vendor/bin/pest
+
+# Run PHPStan static analysis
+./vendor/bin/phpstan analyse
+```
 
 ## 📁 Project Structure
 
 ```
 AcmeCORP/
-├── app/                    # Laravel backend
-│   ├── Http/Controllers/   # API controllers
-│   ├── Models/            # Database models
-│   └── ...
-├── resources/
-│   ├── js/               # Vue.js frontend
-│   │   ├── views/        # Vue components
-│   │   ├── router/       # Vue Router
-│   │   └── App.vue       # Main Vue app
-│   └── ...
+├── app/
+│   ├── Http/Controllers/Api/    # API Controllers
+│   ├── Models/                  # Eloquent Models
+│   ├── Providers/              # Service Providers
+│   └── Services/Payments/      # Payment Services
 ├── database/
-│   └── migrations/       # Database migrations
-├── setup.sh             # Setup script
-└── README.md           # This file
+│   ├── migrations/             # Database Migrations
+│   └── seeders/               # Database Seeders
+├── resources/
+│   ├── js/
+│   │   ├── components/        # Vue Components
+│   │   ├── router/           # Vue Router
+│   │   ├── stores/           # Pinia Stores
+│   │   └── views/            # Vue Views
+│   └── views/                # Blade Templates
+├── routes/
+│   ├── api.php               # API Routes
+│   └── web.php               # Web Routes
+└── tests/                    # Test Files
 ```
 
-## 🗄️ Database Schema
+## 🔧 Configuration
 
-The platform uses the following main tables:
-- `users` - Employee accounts
-- `campaigns` - Fundraising campaigns
-- `donations` - Employee donations
-- `categories` - Campaign categories
+### Environment Variables
+Key environment variables in `.env`:
 
-## 🔧 Development
+```env
+APP_NAME="ACME Corp CSR Platform"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
 
-### Available Commands
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ACMECorp
+DB_USERNAME=root
+DB_PASSWORD=
 
-```bash
-# Laravel commands
-php artisan serve          # Start development server
-php artisan migrate        # Run database migrations
-php artisan migrate:fresh  # Reset database and run migrations
-php artisan make:model     # Create new model
-php artisan make:controller # Create new controller
-
-# Frontend commands
-npm run dev               # Start Vite dev server
-npm run build            # Build for production
-npm run preview          # Preview production build
+SANCTUM_STATEFUL_DOMAINS=localhost:8000
+SESSION_DOMAIN=localhost
 ```
 
-### Code Quality Tools
+## 🚀 Deployment
 
-- **PHPStan** - Static analysis (Level 8)
-- **Pest** - Testing framework
-- **Laravel Pint** - Code styling
-
-## 🧪 Testing
-
-```bash
-# Run PHP tests
-php artisan test
-
-# Run with Pest
-./vendor/bin/pest
-```
-
-## 📦 Production Deployment
-
-1. Set environment variables for production
+### Production Setup
+1. Set `APP_ENV=production` and `APP_DEBUG=false`
 2. Run `npm run build` to compile assets
-3. Configure web server (Apache/Nginx)
-4. Set up production database
-5. Run `php artisan migrate --force`
+3. Configure your web server (Apache/Nginx)
+4. Set up SSL certificates
+5. Configure database for production
+
+### Docker (Optional)
+```bash
+# Build and run with Docker
+docker-compose up -d
+```
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## 📄 License
+## 📝 License
 
-This project is proprietary software for ACME Corp.
+This project is proprietary software developed for ACME Corp.
 
 ## 🆘 Support
 
-For technical issues or questions, please contact the development team.
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation
+
+## 🔄 Version History
+
+- **v1.0.0**: Initial release with core CSR functionality
+  - Employee authentication
+  - Campaign management
+  - Donation system
+  - Admin panel
+  - Role-based access control
 
 ---
 
-**Built with ❤️ for ACME Corp's CSR initiative**
+**Built with ❤️ for ACME Corp's Corporate Social Responsibility Initiative**
