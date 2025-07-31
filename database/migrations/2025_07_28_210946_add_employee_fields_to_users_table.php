@@ -15,13 +15,9 @@ return new class extends Migration
             $table->string('employee_id')->unique()->after('id')->comment('Unique company employee ID');
             $table->string('department')->nullable()->after('email')->comment('Employee department');
             $table->string('position')->nullable()->after('department')->comment('Employee position/title');
-            $table->date('hire_date')->nullable()->after('position')->comment('Employee hire date');
-            $table->boolean('is_active')->default(true)->after('hire_date')->comment('Account active status');
-            $table->string('profile_photo')->nullable()->after('is_active')->comment('Profile photo URL');
-            $table->string('phone')->nullable()->after('profile_photo')->comment('Employee phone number');
-            $table->text('bio')->nullable()->after('phone')->comment('Employee bio/description');
-            $table->json('preferences')->nullable()->after('bio')->comment('User preferences as JSON');
-            $table->foreignId('role_id')->constrained('roles')->after('preferences')->comment('Role ID');
+            $table->boolean('is_active')->default(true)->after('position')->comment('Account active status');
+            $table->string('phone')->nullable()->after('is_active')->comment('Employee phone number');
+            $table->foreignId('role_id')->constrained('roles')->after('phone')->comment('Role ID');
         });
     }
 

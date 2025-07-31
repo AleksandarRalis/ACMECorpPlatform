@@ -50,13 +50,9 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="">Select a category</option>
-              <option value="environment">Environment</option>
-              <option value="education">Education</option>
-              <option value="health">Health</option>
-              <option value="poverty">Poverty Relief</option>
-              <option value="animals">Animal Welfare</option>
-              <option value="community">Community Development</option>
-              <option value="other">Other</option>
+              <option v-for="category in categories" :key="category.value" :value="category.value">
+                {{ category.label }}
+              </option>
             </select>
           </div>
 
@@ -143,48 +139,43 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
+import { useCampaignForm } from '../composables/useCampaignForm';
 
 const router = useRouter();
-const loading = ref(false);
 
-const form = ref({
-  title: '',
-  description: '',
-  category: '',
-  goal: '',
-  start_date: '',
-  end_date: '',
-  image_url: ''
-});
-
-const minDate = computed(() => {
-  const today = new Date();
-  return today.toISOString().split('T')[0];
-});
+const {
+  form,
+  loading,
+  minDate,
+  categories,
+  resetForm,
+  getPayload,
+  validateForm
+} = useCampaignForm();
 
 const createCampaign = async () => {
+  // Validate form
+  const validationErrors = validateForm();
+  
+  if (validationErrors.length > 0) {
+    alert('Please fix the following errors:\n' + validationErrors.join('\n'));
+    return;
+  }
+
   loading.value = true;
   
   try {
-    const payload = {
-      title: form.value.title,
-      description: form.value.description,
-      category: form.value.category,
-      goal_amount: form.value.goal,
-      start_date: form.value.start_date,
-      end_date: form.value.end_date,
-      image_url: form.value.image_url
-    };
-
+    const payload = getPayload();
     await axios.post('/api/campaigns', payload);
     
-    router.push('/campaigns');
+    // Reset form and redirect
+    resetForm();
+    router.push('/campaigns/my');
   } catch (error) {
     console.error('Error creating campaign:', error);
-    alert('Error creating campaign. Please try again.');
+    alert(error.response?.data?.message || 'Error creating campaign. Please try again.');
   } finally {
     loading.value = false;
   }

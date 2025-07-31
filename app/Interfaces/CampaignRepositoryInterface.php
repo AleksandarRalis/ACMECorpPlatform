@@ -11,6 +11,8 @@ use Illuminate\Database\Eloquent\Collection;
 interface CampaignRepositoryInterface
 {
     public function list(): LengthAwarePaginator;
+
+    public function listAll(): LengthAwarePaginator;
     
     public function show(int $id): ?Campaign;
 
@@ -18,8 +20,9 @@ interface CampaignRepositoryInterface
 
     public function create(CampaignDTO $campaignDTO): Campaign;
 
-    public function update(Campaign $campaign, array $data): bool;
+    public function update(CampaignDTO $campaignDTO, Campaign $campaign): Campaign;
 
     public function destroy(Campaign $campaign): bool;
 
+    public function activate(Campaign $campaign): Campaign;
 }

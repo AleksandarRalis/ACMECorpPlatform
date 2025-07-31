@@ -45,14 +45,18 @@ class UpsertCampaignRequest extends FormRequest
             ],
             'start_date' => [
                 'required',
-                'date',
-                'after_or_equal:today',
+                'date'
             ],
             'end_date' => [
                 'required',
                 'date',
                 'after:start_date',
-            ]
+            ],
+            'status' => [
+                'nullable',
+                'string',
+                'in:active,inactive,completed,cancelled,pending',
+            ],
         ];
     }
 

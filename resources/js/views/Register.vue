@@ -33,24 +33,46 @@
           <p v-if="fieldErrors.email" class="text-red-500 text-sm mt-1">{{ fieldErrors.email }}</p>
         </div>
         <div class="mb-4">
-          <label class="block text-gray-700 mb-1" for="employee_id">Employee ID</label>
-          <input v-model="employee_id" id="employee_id" type="text" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
-        </div>
-        <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="department">Department</label>
-          <input v-model="department" id="department" type="text" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+          <input 
+            v-model="department" 
+            id="department" 
+            type="text" 
+            required 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.department ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.department" class="text-red-500 text-sm mt-1">{{ fieldErrors.department }}</p>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="position">Position</label>
-          <input v-model="position" id="position" type="text" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+          <input 
+            v-model="position" 
+            id="position" 
+            type="text" 
+            required 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.position ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.position" class="text-red-500 text-sm mt-1">{{ fieldErrors.position }}</p>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="phone">Phone</label>
-          <input v-model="phone" id="phone" type="text" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
-        </div>
-        <div class="mb-4">
-          <label class="block text-gray-700 mb-1" for="bio">Bio</label>
-          <textarea v-model="bio" id="bio" rows="2" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300"></textarea>
+          <input 
+            v-model="phone" 
+            id="phone" 
+            type="text" 
+            required 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.phone ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.phone" class="text-red-500 text-sm mt-1">{{ fieldErrors.phone }}</p>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="password">Password</label>
@@ -107,11 +129,9 @@ import axios from 'axios';
 
 const name = ref('');
 const email = ref('');
-const employee_id = ref('');
 const department = ref('');
 const position = ref('');
 const phone = ref('');
-const bio = ref('');
 const password = ref('');
 const password_confirmation = ref('');
 const error = ref('');
@@ -130,11 +150,9 @@ async function handleRegister() {
     const response = await axios.post('/api/auth/register', {
       name: name.value,
       email: email.value,
-      employee_id: employee_id.value,
       department: department.value,
       position: position.value,
       phone: phone.value,
-      bio: bio.value,
       password: password.value,
       password_confirmation: password_confirmation.value,
     });

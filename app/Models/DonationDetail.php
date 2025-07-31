@@ -26,7 +26,6 @@ class DonationDetail extends Model
         'processed_at',
         'failed_at',
         'failure_reason',
-        'processed_by',
         'donor_id'
     ];
 
@@ -41,6 +40,7 @@ class DonationDetail extends Model
             'processed_at' => 'datetime',
             'failed_at' => 'datetime',
             'metadata' => 'array',
+            'gateway_response' => 'array',
         ];
     }
 
@@ -57,7 +57,7 @@ class DonationDetail extends Model
      */
     public function processor(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'processed_by');
+        return $this->belongsTo(User::class, 'donor_id');
     }
 
     /**

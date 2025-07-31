@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\DTO\DonationDTO;
 use App\Models\Campaign;
 use App\Models\Donation;
-use App\DTO\DonationDetailDTO;
+use Illuminate\Http\Request;
+use App\Services\EmailService;
 use App\Services\PaymentService;
 use App\Services\DonationService;
-use App\Services\EmailService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Services\DonationDetailService;
 use App\Http\Requests\InsertDonationRequest;
 
@@ -23,16 +24,20 @@ class DonationsController extends Controller
         protected EmailService $emailService,
     ) {}
     /**
-     * Display a listing of donations for a campaign.
+     * Display a list of all donations.
      */
-    public function index(Campaign $campaign): JsonResponse {}
+    public function index(Request $request): JsonResponse 
+    {
+        $filters = $request->only(['search', 'campaign', 'month']);
+        return new JsonResponse($this->donationService->list($filters));
+    }
 
     /**
      * Store a newly created donation.
      */
     public function store(InsertDonationRequest $request, Campaign $campaign): JsonResponse
     {
-        $donorId = auth()->id();
+        $donorId = Auth::id();
         $donationDTO = DonationDTO::fromRequest($request, $campaign->id, $donorId);
 
         // Process payment
@@ -52,28 +57,16 @@ class DonationsController extends Controller
     /**
      * Display the specified donation.
      */
-    public function show(Donation $donation): JsonResponse {}
+    public function show(Donation $donation): JsonResponse 
+    {
+        return new JsonResponse($this->donationService->show($donation));
+    }
 
     /**
      * Get donations made by the authenticated user.
      */
-    public function myDonations(): JsonResponse {}
-
-    /**
-     * Get donation statistics for a campaign.
-     */
-    public function statistics(Campaign $campaign): JsonResponse
+    public function myDonations(): JsonResponse 
     {
-        $stats = [
-            'total_donations' => $campaign->donations()->count(),
-            'total_amount' => $campaign->donations()->sum('amount'),
-            'average_donation' => $campaign->donations()->avg('amount'),
-            'anonymous_donations' => $campaign->donations()->where('anonymous', true)->count(),
-            'unique_donors' => $campaign->donations()->distinct('donor_id')->count(),
-        ];
-
-        return response()->json([
-            'statistics' => $stats,
-        ]);
+        return new JsonResponse($this->donationService->myDonations(Auth::user()));
     }
 }

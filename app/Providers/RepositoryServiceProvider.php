@@ -6,12 +6,18 @@ use Illuminate\Support\ServiceProvider;
 use App\Interfaces\{
     CampaignRepositoryInterface,
     DonationRepositoryInterface,
-    DonationDetailRepositoryInterface
+    DonationDetailRepositoryInterface,
+    AdminDashboardRepositoryInterface,
+    UserRepositoryInterface,
+    AuthRepositoryInterface,
 };
 use App\Repositories\{
     CampaignRepository,
     DonationRepository,
-    DonationDetailRepository
+    DonationDetailRepository,
+    AdminDashboardRepository,
+    UserRepository,
+    AuthRepository,
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -20,6 +26,9 @@ class RepositoryServiceProvider extends ServiceProvider
     {
         $this->app->bind(CampaignRepositoryInterface::class, CampaignRepository::class);
         $this->app->bind(DonationRepositoryInterface::class, DonationRepository::class);
-        $this->app->bind(DonationDetailRepositoryInterface::class, DonationDetailRepository::class);    
+        $this->app->bind(DonationDetailRepositoryInterface::class, DonationDetailRepository::class);      
+        $this->app->bind(AdminDashboardRepositoryInterface::class, AdminDashboardRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     }
 }

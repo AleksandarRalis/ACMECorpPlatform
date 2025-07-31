@@ -1,0 +1,78 @@
+parameters:
+    # Level 8 is the highest level
+    level: 8
+    
+    # Paths to analyze
+    paths:
+        - app
+        - config
+        - database
+        - routes
+    
+    # Exclude paths
+    excludePaths:
+        - app/Console/Kernel.php (?)
+        - app/Exceptions/Handler.php (?)
+        - app/Http/Kernel.php (?)
+        - app/Providers/AppServiceProvider.php
+        - app/Providers/AuthServiceProvider.php (?)
+        - app/Providers/EventServiceProvider.php (?)
+        - app/Providers/RouteServiceProvider.php (?)
+        - database/factories
+        - database/migrations
+        - database/seeders
+        - tests
+    
+    # Ignore specific errors that are common in Laravel
+    ignoreErrors:
+        # Laravel Facades
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+::[a-zA-Z0-9\\_]+\(\)#'
+        - '#Access to an undefined property [a-zA-Z0-9\\_]+::\$[a-zA-Z0-9\\_]+#'
+        
+        # Laravel Collections
+        - '#Call to an undefined method Illuminate\\Support\\Collection::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Eloquent
+        - '#Call to an undefined method Illuminate\\Database\\Eloquent\\Model::[a-zA-Z0-9\\_]+\(\)#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$[a-zA-Z0-9\\_]+#'
+        
+        # Laravel Request
+        - '#Call to an undefined method Illuminate\\Http\\Request::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Response
+        - '#Call to an undefined method Illuminate\\Http\\JsonResponse::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Validation
+        - '#Call to an undefined method Illuminate\\Validation\\ValidationException::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Middleware
+        - '#Parameter \$request of method [a-zA-Z0-9\\_]+::handle\(\) has invalid type#'
+        
+        # Laravel Controllers
+        - '#Parameter \$request of method [a-zA-Z0-9\\_]+::[a-zA-Z0-9\\_]+\(\) has invalid type#'
+        
+        # Laravel Form Requests
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+Request::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Resources
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+Resource::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel DTOs
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+DTO::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Services
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+Service::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Repositories
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+Repository::[a-zA-Z0-9\\_]+\(\)#'
+        
+        # Laravel Interfaces
+        - '#Call to an undefined method [a-zA-Z0-9\\_]+Interface::[a-zA-Z0-9\\_]+\(\)#'
+    
+    # Bootstrap file for Laravel
+    bootstrapFiles:
+        - vendor/autoload.php
+    
+    # Scan files
+    scanFiles:
+        - app/Providers/AppServiceProvider.php 

@@ -10,7 +10,6 @@ class DonationDetailRepository implements DonationDetailRepositoryInterface
 {
     public function create(DonationDetailDTO $donationDetailDTO): DonationDetail
     {
-        // dd($donationDetailDTO->toArray());
         return DonationDetail::create($donationDetailDTO->toArray());
     }
 }

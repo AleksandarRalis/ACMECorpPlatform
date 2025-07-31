@@ -2,43 +2,51 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
+use App\Enums\UserRole;
+use App\Enums\UserStatus;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
-            'remember_token' => Str::random(10),
+            'employee_id' => 'EMP' . $this->faker->unique()->numerify('###'),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'department' => $this->faker->randomElement(['Marketing', 'Sales', 'IT']),
+            'position' => $this->faker->jobTitle(),
+            'is_active' => UserStatus::ACTIVE->id(),
+            'phone' => $this->faker->phoneNumber(),
+            'password' => bcrypt('password'),
+            'role_id' => UserRole::ADMIN->id(),
         ];
     }
 
     /**
-     * Indicate that the model's email address should be unverified.
+     * Define an inactive user state
      */
-    public function unverified(): static
+    public function inactive(): self
     {
-        return $this->state(fn (array $attributes) => [
-            'email_verified_at' => null,
-        ]);
+        return $this->state(fn () => ['is_active' => UserStatus::INACTIVE->id()]);
+    }
+
+    public function active(): self
+    {
+        return $this->state(fn () => ['is_active' => UserStatus::ACTIVE->id()]);
+    }
+
+    public function admin(): self
+    {
+        return $this->state(fn () => ['role_id' => UserRole::ADMIN->id()]);
+    }
+
+    public function employee(): self
+    {
+        return $this->state(fn () => ['role_id' => UserRole::EMPLOYEE->id()]);
     }
 }

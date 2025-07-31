@@ -10,77 +10,42 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use App\Http\Requests\UpsertUserRequest;
+use App\Http\Requests\LoginRequest;
+use App\Services\UserService;
+use App\Services\AuthService;
+use App\DTO\UserDTO;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected UserService $userService,
+        protected AuthService $authService
+    ) {}
+
     /**
      * Register a new user.
      */
-    public function register(Request $request): JsonResponse
+    public function store(UpsertUserRequest $request): JsonResponse
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'employee_id' => 'required|string|unique:users',
-            'department' => 'required|string|max:255',
-            'position' => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'bio' => 'nullable|string|max:1000',
-        ]);
+        $userDTO = UserDTO::fromRequest($request);
+        $user = $this->userService->create($userDTO);
 
-        // Get employee role (default role for new users)
-        $employeeRole = Role::where('name', 'employee')->first();
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'employee_id' => $request->employee_id,
-            'department' => $request->department,
-            'position' => $request->position,
-            'phone' => $request->phone,
-            'bio' => $request->bio,
-            'is_active' => true,
-            'role_id' => $employeeRole->id,
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user->load('role'),
-            'token' => $token,
+        return new JsonResponse([
+            'message' => 'User registered successfully. Please login to continue.',
+            'user' => $user,
         ], 201);
     }
 
     /**
      * Login user and create token.
      */
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|string|email',
-            'password' => 'required|string',
-        ]);
-
-        if (!Auth::attempt($request->only('email', 'password'))) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
-        }
-
-        $user = User::where('email', $request->email)->first();
-        
-        if (!$user->isActive()) {
-            throw ValidationException::withMessages([
-                'email' => ['Your account has been deactivated.'],
-            ]);
-        }
-
+        $user = $this->authService->authenticate($request->email, $request->password);
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        return response()->json([
+        return new JsonResponse([
             'message' => 'Login successful',
             'user' => $user->load('role'),
             'token' => $token,

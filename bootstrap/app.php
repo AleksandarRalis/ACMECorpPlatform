@@ -13,7 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'campaign.auth' => \App\Http\Middleware\CampaignUpdateAuthorization::class,
+            'campaign.auth' => \App\Http\Middleware\CampaignAuthorization::class,
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
     })

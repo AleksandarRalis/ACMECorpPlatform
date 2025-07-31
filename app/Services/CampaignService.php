@@ -19,9 +19,14 @@ class CampaignService
     /**
      * Get all campaigns with optional filters.
      */
-    public function list(array $filters = []): array
+    public function list(): array
     {
         return CampaignResource::collection($this->campaignRepository->list())->response()->getData(true);
+    }
+
+    public function listAll(): array
+    {
+        return CampaignResource::collection($this->campaignRepository->listAll())->response()->getData(true);
     }
 
     /**
@@ -43,9 +48,9 @@ class CampaignService
     /**
      * Update an existing campaign.
      */
-    public function update(Campaign $campaign, array $data): bool
+    public function update(CampaignDTO $campaignDTO, Campaign $campaign): Campaign
     {
-        return $this->campaignRepository->update($campaign, $data);
+        return $this->campaignRepository->update($campaignDTO, $campaign);
     }
 
     /**
@@ -62,5 +67,13 @@ class CampaignService
     public function show(int $id): ?CampaignResource
     {
         return CampaignResource::make($this->campaignRepository->show($id));
+    }
+
+    /**
+     * Activate a campaign.
+     */
+    public function activate(Campaign $campaign): Campaign
+    {
+        return $this->campaignRepository->activate($campaign);
     }
 } 

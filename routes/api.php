@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CampaignsController;
 use App\Http\Controllers\Api\DonationsController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,7 +20,7 @@ use App\Http\Controllers\Api\AdminController;
 */
 
 // Public routes
-Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/register', [AuthController::class, 'store']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 // Protected routes
@@ -38,16 +39,27 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Donation routes
     Route::get('/donations', [DonationsController::class, 'index']); 
+    Route::get('/donations/my-donations', [DonationsController::class, 'myDonations']);
     Route::post('/donations/{campaign}', [DonationsController::class, 'store']); 
-    Route::get('/donations/statistics', [DonationsController::class, 'statistics']);
-    Route::get('/donations/my', [DonationsController::class, 'myDonations']);
     Route::get('/donations/{donation}', [DonationsController::class, 'show']);
 
     // Admin routes (admin only)
     Route::middleware('admin')->group(function () {
-        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+        Route::get('/admin/dashboard', [AdminController::class, 'index']);
         Route::get('/admin/campaigns/{campaign}/stats', [AdminController::class, 'campaignStats']);
         Route::get('/admin/users', [AdminController::class, 'users']);
+        Route::delete('/admin/users/{user}', [AdminController::class, 'deleteUser']);
+        
+        // Admin campaign management routes
+        Route::put('/admin/campaigns/{campaign}', [CampaignsController::class, 'update']);
+        Route::delete('/admin/campaigns/{campaign}', [CampaignsController::class, 'destroy']);
+        Route::post('/admin/campaigns/{campaign}/activate', [CampaignsController::class, 'activate']);
+        Route::get('/admin/campaigns/all', [CampaignsController::class, 'listAll']);
+        
+        // Admin user management routes
+        Route::get('/admin/users', [UsersController::class, 'index']);
+        Route::put('/admin/users/{user}', [UsersController::class, 'update']);
+        Route::delete('/admin/users/{user}', [UsersController::class, 'destroy']);
     });
 });
 

@@ -20,7 +20,6 @@ class Donation extends Model
         'campaign_id',
         'donor_id',
         'amount',
-        'anonymous',
         'message',
     ];
 
@@ -33,7 +32,6 @@ class Donation extends Model
     {
         return [
             'amount' => 'decimal:2',
-            'anonymous' => 'boolean',
         ];
     }
 
@@ -62,14 +60,10 @@ class Donation extends Model
     }
 
     /**
-     * Get the donor name (anonymous or actual name).
+     * Get the donor name.
      */
     public function getDonorNameAttribute(): string
     {
-        if ($this->anonymous) {
-            return 'Anonymous Donor';
-        }
-        
-        return $this->donor->name ?? 'Unknown Donor';
+        return $this->createdBy->name ?? 'Unknown Donor';
     }
 } 

@@ -22,11 +22,6 @@ class CampaignAuthorization
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
-        // Admin can do everything
-        if ($user->isAdmin()) {
-            return $next($request);
-        }
-
         // Get campaign from route parameter
         $campaign = $request->route('campaign');
         
@@ -35,9 +30,10 @@ class CampaignAuthorization
         }
 
         // Only allow users to update or delete their own campaigns
-        if ($campaign->created_by == $request->user()->id) {
+        if ($campaign->created_by == $user->id) {
             return $next($request);
         }
-        return response()->json(['message' => 'You can only update your own campaigns'], 403);
+        
+        return response()->json(['message' => 'You can only modify your own campaigns'], 403);
     }
 }

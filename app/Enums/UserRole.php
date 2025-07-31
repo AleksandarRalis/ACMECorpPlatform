@@ -18,6 +18,15 @@ enum UserRole: string
         };
     }
 
+    public function id(): int
+{
+    return match($this) {
+        self::ADMIN    => 1,
+        self::EMPLOYEE => 2,
+    };
+}
+
+
     /**
      * Check if the role is admin.
      */
@@ -26,30 +35,11 @@ enum UserRole: string
         return $this === self::ADMIN;
     }
 
-    /**
-     * Check if the role is employee.
-     */
-    public function isEmployee(): bool
+    public static function fromName(string $name): int
     {
-        return $this === self::EMPLOYEE;
-    }
-
-    /**
-     * Get all available roles.
-     */
-    public static function all(): array
-    {
-        return [
-            self::ADMIN,
-            self::EMPLOYEE,
-        ];
-    }
-
-    /**
-     * Get the default role for new users.
-     */
-    public static function default(): self
-    {
-        return self::EMPLOYEE;
+        return match($name) {
+            self::ADMIN->value => 1,
+            self::EMPLOYEE->value => 2,
+        };
     }
 } 

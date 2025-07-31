@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\UpsertCampaignRequest;
 use App\DTO\CampaignDTO;
 use App\Services\CampaignService;
+use App\Http\Resources\CampaignResource;
 
 class CampaignsController extends Controller
 {
@@ -19,9 +20,14 @@ class CampaignsController extends Controller
     /**
      * Display a listing of campaigns.
      */
-    public function index(Request $request): JsonResponse
+    public function index(): JsonResponse
     {
         return new JsonResponse($this->campaignService->list());
+    }
+
+    public function listAll(): JsonResponse
+    {
+        return new JsonResponse($this->campaignService->listAll());
     }
 
     /**
@@ -45,9 +51,11 @@ class CampaignsController extends Controller
     /**
      * Update the specified campaign.
      */
-    public function update(Request $request, Campaign $campaign): JsonResponse
+    public function update(UpsertCampaignRequest $request, Campaign $campaign): JsonResponse
     {
-        
+        $campaignDTO = CampaignDTO::fromRequestForUpdate($request, $campaign);
+        $campaign = $this->campaignService->update($campaignDTO, $campaign);
+        return new JsonResponse($campaign);
     }
 
     /**
@@ -55,14 +63,26 @@ class CampaignsController extends Controller
      */
     public function destroy(Campaign $campaign): JsonResponse
     {
-        
+        $this->campaignService->destroy($campaign);
+        return new JsonResponse(['message' => 'Campaign deleted successfully']);
+    }
+
+    /**
+     * Activate a campaign (admin only).
+     */
+    public function activate(Campaign $campaign): JsonResponse
+    {
+        $this->campaignService->activate($campaign);
+        return new JsonResponse(['message' => 'Campaign activated successfully']);
     }
 
     /**
      * Get campaigns created by the authenticated user.
      */
-    public function listCampaignsByUser(): JsonResponse
+    public function myCampaigns(): JsonResponse
     {
-     
+        $user = Auth::user();
+        $campaigns = $this->campaignService->listByUser($user);
+        return new JsonResponse(CampaignResource::collection($campaigns));
     }
 } 

@@ -14,48 +14,23 @@ class DummyPaymentGateway implements PaymentGatewayInterface
     public function processPayment(DonationDTO $donationDTO): PaymentResult
     {
         // Example: Call external API (e.g., PayPal)
-        // Fake example response
+        // Dummy response - always successful
         $apiResponse = [
             'status' => 'Completed',
-            'id' => Str::random(9, '0123456789'),
+            'id' => Str::random(9),
             'amount' => $donationDTO->amount,
         ];
-        try {
-            if ($apiResponse['status'] === 'Completed') {
-                return new PaymentResult(
-                    payment_method: 'PayPal',
-                    transaction_id: $apiResponse['id'],
-                    payment_status: 'completed',
-                    gateway_response: '{"auth_code": "AUTH987654", "avs_result": "Y", "cvv_result": "M", "gateway_message": "Payment authorized and captured", "gateway_reference": "GWREF12345"}',
-                    metadata: '{"customer_id": "CUST_00123", "order_id": "ORD_56789","ip_address": "192.168.1.25","platform": "web","notes": "Gift purchase, do not include invoice"}',
-                    processed_at: '2025-07-07',
-                    failed_at: null,
-                    failed_reason: null,
-                );
-            }
-
-            return new PaymentResult(
-                payment_method: 'PayPal',
-                transaction_id: $apiResponse['id'],
-                payment_status: 'failed',
-                gateway_response: '{"auth_code": "AUTH987654", "avs_result": "Y", "cvv_result": "M", "gateway_message": "Payment authorized and captured", "gateway_reference": "GWREF12345"}',
-                metadata: '{"customer_id": "CUST_00123", "order_id": "ORD_56789","ip_address": "192.168.1.25","platform": "web","notes": "Gift purchase, do not include invoice"}',
-                processed_at: '2025-07-07',
-                failed_at: '2025-07-07 12:45',
-                failed_reason: 'Insufficient amount on account',
-            );
-        } catch (\Exception $e) {
-            return new PaymentResult(
-                payment_method: 'PayPal',
-                transaction_id: $apiResponse['id'],
-                payment_status: 'failed',
-                gateway_response: '{"auth_code": "AUTH987654", "avs_result": "Y", "cvv_result": "M", "gateway_message": "Payment authorized and captured", "gateway_reference": "GWREF12345"}',
-                metadata: '{"customer_id": "CUST_00123", "order_id": "ORD_56789","ip_address": "192.168.1.25","platform": "web","notes": "Gift purchase, do not include invoice"}',
-                processed_at: '2025-07-07',
-                failed_at: '2025-07-07 12:45',
-                failed_reason: $e->getMessage(),
-            );
-        }
+        
+        return new PaymentResult(
+            payment_method: 'PayPal',
+            transaction_id: $apiResponse['id'],
+            payment_status: 'completed',
+            gateway_response: '{"auth_code": "AUTH987654", "avs_result": "Y", "cvv_result": "M", "gateway_message": "Payment authorized and captured", "gateway_reference": "GWREF12345"}',
+            metadata: '{"customer_id": "CUST_00123", "order_id": "ORD_56789","ip_address": "192.168.1.25","platform": "web","notes": "Gift purchase, do not include invoice"}',
+            processed_at: '2025-07-07',
+            failed_at: null,
+            failed_reason: null,
+        );
     }
 
     public function refundPayment() {}

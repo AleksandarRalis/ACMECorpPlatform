@@ -3,6 +3,7 @@
 namespace App\DTO;
 
 use App\Interfaces\DTO;
+use App\Models\Campaign;
 use App\Enums\CampaignStatus;
 use App\Http\Requests\UpsertCampaignRequest;
 
@@ -36,6 +37,23 @@ class CampaignDTO implements DTO
             createdBy: $request->user()->id,
         );
     }
+
+
+public static function fromRequestForUpdate(UpsertCampaignRequest $request, Campaign $campaign): CampaignDTO
+{
+    return new self(
+        title: $request->title,
+        description: $request->description,
+        category: $request->category,
+        goalAmount: $request->goal_amount,
+        currentAmount: $campaign->current_amount, 
+        imageUrl: $request->image_url,
+        startDate: $request->start_date,
+        endDate: $request->end_date,
+        status: $request->status ?? CampaignStatus::PENDING->value,
+        createdBy: $campaign->created_by,
+    );
+}
 
     public function toArray(): array
     {

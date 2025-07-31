@@ -53,6 +53,9 @@ class CampaignResource extends JsonResource
             
             'days_left' => (int) max(0, now()->diffInDays(\Carbon\Carbon::parse($this->end_date))),
 
+            // Count fields
+            'donations_count' => $this->donations_count ?? $this->donations()->count(),
+
         ];
     }
 } 

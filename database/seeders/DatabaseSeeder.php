@@ -43,7 +43,6 @@ class DatabaseSeeder extends Seeder
             'department' => 'IT',
             'position' => 'System Administrator',
             'phone' => '+1234567890',
-            'bio' => 'System administrator for ACME Corp CSR Platform',
             'is_active' => true,
             'role_id' => $adminRole->id,
         ]);
@@ -57,7 +56,6 @@ class DatabaseSeeder extends Seeder
                 'department' => 'Marketing',
                 'position' => 'Marketing Manager',
                 'phone' => '+1234567891',
-                'bio' => 'Passionate about social causes and community engagement',
                 'role_id' => $employeeRole->id,
             ],
             [
@@ -67,7 +65,6 @@ class DatabaseSeeder extends Seeder
                 'department' => 'HR',
                 'position' => 'HR Specialist',
                 'phone' => '+1234567892',
-                'bio' => 'Dedicated to employee well-being and corporate social responsibility',
                 'role_id' => $employeeRole->id,
             ],
             [
@@ -77,7 +74,6 @@ class DatabaseSeeder extends Seeder
                 'department' => 'Finance',
                 'position' => 'Financial Analyst',
                 'phone' => '+1234567893',
-                'bio' => 'Interested in sustainable finance and social impact investing',
                 'role_id' => $employeeRole->id,
             ],
         ];

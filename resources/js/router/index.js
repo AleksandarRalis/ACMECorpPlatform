@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Home from '../views/Home.vue';
 import Campaigns from '../views/Campaigns.vue';
 import CampaignDetail from '../views/CampaignDetail.vue';
 import CreateCampaign from '../views/CreateCampaign.vue';
+import EditCampaign from '../views/EditCampaign.vue';
+import MyCampaigns from '../views/MyCampaigns.vue';
 import Admin from '../views/Admin.vue';
 import { useAuthStore } from '../stores/auth';
 
@@ -10,7 +11,7 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    component: Home
+    component: Campaigns
   },
   {
     path: '/campaigns',
@@ -21,6 +22,17 @@ const routes = [
     path: '/campaigns/create',
     name: 'CreateCampaign',
     component: CreateCampaign
+  },
+  {
+    path: '/campaigns/edit/:id',
+    name: 'EditCampaign',
+    component: EditCampaign,
+    props: true
+  },
+  {
+    path: '/campaigns/my',
+    name: 'MyCampaigns',
+    component: MyCampaigns
   },
   {
     path: '/campaigns/:id',
@@ -50,17 +62,39 @@ const router = createRouter({
   routes
 });
 
-// Navigation guard for authentication
-router.beforeEach((to, from, next) => {
+// Navigation guard for authentication and authorization
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore();
+  
   // If not authenticated and not going to login/register, redirect to login
   if (!auth.token && to.name !== 'Login' && to.name !== 'Register') {
     return next({ name: 'Login' });
   }
-  // If authenticated and going to login/register, redirect to home
-  if (auth.token && (to.name === 'Login' || to.name === 'Register')) {
-    return next({ name: 'Home' });
+  
+  // If authenticated but user data is missing, fetch it
+  if (auth.token && !auth.user) {
+    try {
+      await auth.fetchUser();
+    } catch (error) {
+      // If fetching user fails, redirect to login
+      return next({ name: 'Login' });
+    }
   }
+  
+  // If authenticated and going to login/register, redirect to campaigns
+  if (auth.token && (to.name === 'Login' || to.name === 'Register')) {
+    return next({ name: 'Campaigns' });
+  }
+  
+  // Check admin access for admin routes
+  if (to.name === 'Admin') {
+    const isAdmin = auth.user && auth.user.role && auth.user.role.name === 'admin';
+    if (!isAdmin) {
+      // Redirect non-admin users to campaigns page
+      return next({ name: 'Campaigns' });
+    }
+  }
+  
   next();
 });
 

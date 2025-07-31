@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('image_url')->nullable()->comment('Campaign image URL');
             $table->date('start_date')->comment('Campaign start date');
             $table->date('end_date')->comment('Campaign end date');
-            $table->enum('status', ['active', 'pending', 'completed', 'cancelled'])->default('pending')->comment('Campaign status');
+            $table->enum('status', ['active', 'pending', 'completed', 'cancelled', 'inactive'])->default('pending')->comment('Campaign status');
             
             // Relationships
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade')->comment('Campaign creator');
