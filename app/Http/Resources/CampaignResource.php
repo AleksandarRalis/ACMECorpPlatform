@@ -37,6 +37,16 @@ class CampaignResource extends JsonResource
                     'email' => $this->createdBy->email,
                 ];
             }),
+
+            'donations' => $this->whenLoaded('donations', function () {
+                return $this->donations->map(function ($donation) {
+                    return [
+                        'name' => $donation->createdBy->name,
+                        'message' => $donation->message,
+                        'amount' => $donation->amount,
+                    ];
+                });
+            }),
             
             // Computed fields
             'progress_percentage' => round(($this->current_amount / $this->goal_amount) * 100, 2),

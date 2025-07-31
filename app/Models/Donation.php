@@ -48,7 +48,7 @@ class Donation extends Model
     /**
      * Get the user who made the donation.
      */
-    public function donor(): BelongsTo
+    public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'donor_id');
     }

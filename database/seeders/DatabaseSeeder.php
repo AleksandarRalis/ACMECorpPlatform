@@ -45,6 +45,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '+1234567890',
             'bio' => 'System administrator for ACME Corp CSR Platform',
             'is_active' => true,
+            'role_id' => $adminRole->id,
         ]);
 
         // Create sample employees
@@ -57,6 +58,7 @@ class DatabaseSeeder extends Seeder
                 'position' => 'Marketing Manager',
                 'phone' => '+1234567891',
                 'bio' => 'Passionate about social causes and community engagement',
+                'role_id' => $employeeRole->id,
             ],
             [
                 'name' => 'Jane Smith',
@@ -66,6 +68,7 @@ class DatabaseSeeder extends Seeder
                 'position' => 'HR Specialist',
                 'phone' => '+1234567892',
                 'bio' => 'Dedicated to employee well-being and corporate social responsibility',
+                'role_id' => $employeeRole->id,
             ],
             [
                 'name' => 'Mike Johnson',
@@ -75,6 +78,7 @@ class DatabaseSeeder extends Seeder
                 'position' => 'Financial Analyst',
                 'phone' => '+1234567893',
                 'bio' => 'Interested in sustainable finance and social impact investing',
+                'role_id' => $employeeRole->id,
             ],
         ];
 
@@ -83,18 +87,6 @@ class DatabaseSeeder extends Seeder
                 ...$employeeData,
                 'password' => Hash::make('password'),
                 'is_active' => true,
-            ]);
-        }
-
-        // Also insert into user_role pivot table for consistency
-        $users = User::all();
-        foreach ($users as $user) {
-            DB::table('user_role')->insert([
-                'user_id' => $user->id,
-                'role_id' => $user['email'] === 'admin@acmecorp.com' ? $adminRole->id : $employeeRole->id,
-                'assigned_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
             ]);
         }
 

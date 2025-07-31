@@ -7,17 +7,11 @@ use App\Enums\CampaignStatus;
 
 class UpsertCampaignRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true; // Authorization will be handled in the controller
+        return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     */
     public function rules(): array
     {
         return [
@@ -62,9 +56,6 @@ class UpsertCampaignRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom error messages for validation rules.
-     */
     public function messages(): array
     {
         return [
@@ -95,9 +86,6 @@ class UpsertCampaignRequest extends FormRequest
         ];
     }
 
-    /**
-     * Get custom attributes for validator errors.
-     */
     public function attributes(): array
     {
         return [
@@ -111,9 +99,6 @@ class UpsertCampaignRequest extends FormRequest
         ];
     }
 
-    /**
-     * Prepare the data for validation.
-     */
     protected function prepareForValidation(): void
     {
         // Trim whitespace from string fields

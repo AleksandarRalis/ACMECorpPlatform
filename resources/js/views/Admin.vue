@@ -2,6 +2,37 @@
   <div class="px-4 py-6 sm:px-0">
     <h1 class="text-3xl font-bold text-gray-900 mb-6">Admin Dashboard</h1>
     
+    <!-- Loading State -->
+    <div v-if="loading" class="text-center py-12">
+      <div class="text-gray-500">
+        <svg class="animate-spin mx-auto h-8 w-8 text-blue-600 mb-4" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-gray-600">Loading dashboard data...</p>
+      </div>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="text-center py-12">
+      <div class="text-red-500">
+        <svg class="mx-auto h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+        </svg>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Error Loading Dashboard</h3>
+        <p class="text-gray-600 mb-4">{{ error }}</p>
+        <button 
+          @click="fetchDashboardData"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+        >
+          Try Again
+        </button>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div v-else>
+    
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
       <div class="bg-white p-6 rounded-lg shadow-md">
         <div class="flex items-center">
@@ -109,11 +140,13 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
 const stats = ref({
   activeCampaigns: 0,
@@ -124,26 +157,31 @@ const stats = ref({
 
 const recentCampaigns = ref([]);
 const recentDonations = ref([]);
+const monthlyStats = ref({});
+const campaignPerformance = ref([]);
+const loading = ref(true);
+const error = ref(null);
+
+const fetchDashboardData = async () => {
+  try {
+    loading.value = true;
+    const response = await axios.get('/api/admin/dashboard');
+    
+    stats.value = response.data.stats;
+    recentCampaigns.value = response.data.recentCampaigns;
+    recentDonations.value = response.data.recentDonations;
+    monthlyStats.value = response.data.monthlyStats;
+    campaignPerformance.value = response.data.campaignPerformance;
+    
+  } catch (err) {
+    console.error('Error fetching dashboard data:', err);
+    error.value = err.response?.data?.message || 'Failed to load dashboard data';
+  } finally {
+    loading.value = false;
+  }
+};
 
 onMounted(() => {
-  // Mock data - in real app, fetch from API
-  stats.value = {
-    activeCampaigns: 8,
-    totalRaised: 45600,
-    totalDonors: 342,
-    avgDonation: 133
-  };
-
-  recentCampaigns.value = [
-    { id: 1, title: 'Local Food Bank Support', raised: 6500, progress: 65, created_at: '2024-01-15' },
-    { id: 2, title: 'Environmental Cleanup', raised: 3200, progress: 64, created_at: '2024-01-10' },
-    { id: 3, title: 'Education for All', raised: 12000, progress: 80, created_at: '2024-01-05' }
-  ];
-
-  recentDonations.value = [
-    { id: 1, name: 'John Smith', amount: 100, campaign: 'Local Food Bank', date: '2024-01-20' },
-    { id: 2, name: 'Sarah Johnson', amount: 50, campaign: 'Environmental Cleanup', date: '2024-01-19' },
-    { id: 3, name: 'Mike Davis', amount: 200, campaign: 'Education for All', date: '2024-01-18' }
-  ];
+  fetchDashboardData();
 });
 </script> 

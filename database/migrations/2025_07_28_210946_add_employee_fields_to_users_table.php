@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('phone')->nullable()->after('profile_photo')->comment('Employee phone number');
             $table->text('bio')->nullable()->after('phone')->comment('Employee bio/description');
             $table->json('preferences')->nullable()->after('bio')->comment('User preferences as JSON');
+            $table->foreignId('role_id')->constrained('roles')->after('preferences')->comment('Role ID');
         });
     }
 

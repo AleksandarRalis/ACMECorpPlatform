@@ -2,8 +2,15 @@
 
 namespace App\Repositories;
 
-class DonationDetailRepository
+use App\DTO\DonationDetailDTO;
+use App\Models\DonationDetail;
+use App\Interfaces\DonationDetailRepositoryInterface;
+
+class DonationDetailRepository implements DonationDetailRepositoryInterface
 {
-    public function __construct(
-    ) {}
+    public function create(DonationDetailDTO $donationDetailDTO): DonationDetail
+    {
+        // dd($donationDetailDTO->toArray());
+        return DonationDetail::create($donationDetailDTO->toArray());
+    }
 }

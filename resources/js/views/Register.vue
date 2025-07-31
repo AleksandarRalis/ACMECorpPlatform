@@ -5,11 +5,32 @@
       <form @submit.prevent="handleRegister">
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="name">Full Name</label>
-          <input v-model="name" id="name" type="text" required class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+          <input 
+            v-model="name" 
+            id="name" 
+            type="text" 
+            required 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.name ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.name" class="text-red-500 text-sm mt-1">{{ fieldErrors.name }}</p>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="email">Email</label>
-          <input v-model="email" id="email" type="email" required autocomplete="email" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+          <input 
+            v-model="email" 
+            id="email" 
+            type="email" 
+            required 
+            autocomplete="email" 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.email ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.email" class="text-red-500 text-sm mt-1">{{ fieldErrors.email }}</p>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="employee_id">Employee ID</label>
@@ -33,15 +54,41 @@
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="password">Password</label>
-          <input v-model="password" id="password" type="password" required autocomplete="new-password" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+          <input 
+            v-model="password" 
+            id="password" 
+            type="password" 
+            required 
+            autocomplete="new-password" 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.password ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.password" class="text-red-500 text-sm mt-1">{{ fieldErrors.password }}</p>
         </div>
         <div class="mb-4">
           <label class="block text-gray-700 mb-1" for="password_confirmation">Confirm Password</label>
-          <input v-model="password_confirmation" id="password_confirmation" type="password" required autocomplete="new-password" class="w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300" />
+          <input 
+            v-model="password_confirmation" 
+            id="password_confirmation" 
+            type="password" 
+            required 
+            autocomplete="new-password" 
+            :class="[
+              'w-full px-3 py-2 border rounded focus:outline-none focus:ring',
+              fieldErrors.password_confirmation ? 'border-red-500 focus:border-red-500' : 'focus:border-blue-300'
+            ]" 
+          />
+          <p v-if="fieldErrors.password_confirmation" class="text-red-500 text-sm mt-1">{{ fieldErrors.password_confirmation }}</p>
         </div>
         <div v-if="error" class="mb-4 text-red-600 text-sm">{{ error }}</div>
-        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition" :disabled="loading">
+        <div v-if="success" class="mb-4 text-green-600 text-sm bg-green-50 p-3 rounded">
+          ✅ Registration successful! Redirecting to login page...
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition" :disabled="loading || success">
           <span v-if="loading">Registering...</span>
+          <span v-else-if="success">Success!</span>
           <span v-else>Register</span>
         </button>
       </form>
@@ -56,6 +103,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import axios from 'axios';
 
 const name = ref('');
 const email = ref('');
@@ -67,20 +115,64 @@ const bio = ref('');
 const password = ref('');
 const password_confirmation = ref('');
 const error = ref('');
+const fieldErrors = ref({});
 const loading = ref(false);
+const success = ref(false);
 const router = useRouter();
 
 async function handleRegister() {
   error.value = '';
+  fieldErrors.value = {};
+  success.value = false;
   loading.value = true;
+  
   try {
-    // TODO: Replace with real API call
-    // await registerApi({ name, email, employee_id, department, position, phone, bio, password, password_confirmation })
-    await new Promise(r => setTimeout(r, 1000));
-    // On success, redirect to login
-    router.push('/login');
-  } catch (e) {
-    error.value = 'Registration failed. Please check your input or try again.';
+    const response = await axios.post('/api/auth/register', {
+      name: name.value,
+      email: email.value,
+      employee_id: employee_id.value,
+      department: department.value,
+      position: position.value,
+      phone: phone.value,
+      bio: bio.value,
+      password: password.value,
+      password_confirmation: password_confirmation.value,
+    });
+
+    // Registration successful
+    console.log('Registration successful:', response.data);
+    
+    // Show success state
+    success.value = true;
+    
+    // Redirect to login page after 2 seconds
+    setTimeout(() => {
+      router.push('/login');
+    }, 2000);
+    
+  } catch (err) {
+    console.error('Registration error:', err);
+    
+    if (err.response?.data?.errors) {
+      // Handle validation errors
+      const errors = err.response.data.errors;
+      fieldErrors.value = {};
+      
+      // Set field-specific errors
+      Object.keys(errors).forEach(field => {
+        fieldErrors.value[field] = errors[field][0]; // Take first error message for each field
+      });
+      
+      // Set general error message
+      const errorMessages = Object.values(errors).flat();
+      error.value = 'Please fix the errors below.';
+    } else if (err.response?.data?.message) {
+      // Handle other API errors
+      error.value = err.response.data.message;
+    } else {
+      // Handle network or other errors
+      error.value = 'Registration failed. Please check your connection and try again.';
+    }
   } finally {
     loading.value = false;
   }

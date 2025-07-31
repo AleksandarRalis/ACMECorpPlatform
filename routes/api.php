@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CampaignsController;
 use App\Http\Controllers\Api\DonationsController;
+use App\Http\Controllers\Api\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,11 +37,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/campaigns/{campaign}', [CampaignsController::class, 'destroy'])->middleware('campaign.auth');
 
     // Donation routes
-    Route::get('/campaigns/{campaign}/donations', [DonationsController::class, 'index']);
-    Route::post('/campaigns/{campaign}/donations', [DonationsController::class, 'store']);
-    Route::get('/campaigns/{campaign}/donations/statistics', [DonationsController::class, 'statistics']);
+    Route::get('/donations', [DonationsController::class, 'index']); 
+    Route::post('/donations/{campaign}', [DonationsController::class, 'store']); 
+    Route::get('/donations/statistics', [DonationsController::class, 'statistics']);
     Route::get('/donations/my', [DonationsController::class, 'myDonations']);
     Route::get('/donations/{donation}', [DonationsController::class, 'show']);
+
+    // Admin routes (admin only)
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+        Route::get('/admin/campaigns/{campaign}/stats', [AdminController::class, 'campaignStats']);
+        Route::get('/admin/users', [AdminController::class, 'users']);
+    });
 });
 
 // Legacy route (keeping for compatibility)

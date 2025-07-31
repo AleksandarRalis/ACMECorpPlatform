@@ -27,6 +27,7 @@ class DonationDetail extends Model
         'failed_at',
         'failure_reason',
         'processed_by',
+        'donor_id'
     ];
 
     /**

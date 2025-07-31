@@ -41,6 +41,6 @@ class CampaignRepository implements CampaignRepositoryInterface
 
     public function show(int $id): ?Campaign
     {
-        return Campaign::findOrFail($id);
+        return Campaign::findOrFail($id)->load('donations', 'createdBy');
     }
 }

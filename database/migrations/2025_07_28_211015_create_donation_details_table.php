@@ -28,7 +28,7 @@ return new class extends Migration
             
             // Relationships
             $table->foreignId('donation_id')->constrained('donations')->onDelete('cascade')->comment('Associated donation');
-            $table->foreignId('donor_id')->nullable()->constrained('users')->onDelete('set null')->comment('Who processed the payment');
+            $table->foreignId('donor_id')->constrained('users')->onDelete('cascade')->comment('Who processed the payment');
             
             // Audit fields
             $table->timestamps();
