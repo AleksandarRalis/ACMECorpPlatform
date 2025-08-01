@@ -326,24 +326,144 @@ This design allows easy integration of real payment gateways (Stripe, PayPal, et
 ```
 AcmeCORP/
 ├── app/
-│   ├── Http/Controllers/Api/    # API Controllers
-│   ├── Models/                  # Eloquent Models
-│   ├── Providers/              # Service Providers
-│   └── Services/Payments/      # Payment Services
+│   ├── DTO/                   # Data Transfer Objects
+│   │   ├── CampaignDTO.php
+│   │   ├── DonationDetailDTO.php
+│   │   ├── DonationDTO.php
+│   │   └── UserDTO.php
+│   ├── Enums/                 # PHP Enums
+│   │   ├── CampaignStatus.php
+│   │   ├── Pagination.php
+│   │   ├── PaymentStatus.php
+│   │   ├── UserRole.php
+│   │   └── UserStatus.php
+│   ├── Http/
+│   │   ├── Controllers/Api/   # API Controllers
+│   │   ├── Middleware/        # Custom Middleware
+│   │   ├── Requests/          # Form Request Validation
+│   │   └── Resources/         # API Resources
+│   ├── Interfaces/            # Repository Interfaces
+│   │   ├── AdminDashboardRepositoryInterface.php
+│   │   ├── CampaignRepositoryInterface.php
+│   │   ├── DonationDetailRepositoryInterface.php
+│   │   ├── DonationRepositoryInterface.php
+│   │   ├── DTO.php
+│   │   ├── PaymentGatewayInterface.php
+│   │   └── UserRepositoryInterface.php
+│   ├── Mail/                  # Mail Classes
+│   │   └── DonationConfirmation.php
+│   ├── Models/                # Eloquent Models
+│   │   ├── Campaign.php
+│   │   ├── DonationDetail.php
+│   │   ├── Donation.php
+│   │   ├── Role.php
+│   │   └── User.php
+│   ├── PaymentGateways/       # Payment Gateway Implementations
+│   │   └── DummyPaymentGateway.php
+│   ├── Providers/             # Service Providers
+│   │   ├── AppServiceProvider.php
+│   │   ├── PaymentGatewaysProvider.php
+│   │   └── RepositoryServiceProvider.php
+│   ├── Repositories/          # Repository Implementations
+│   │   ├── AdminDashboardRepository.php
+│   │   ├── CampaignRepository.php
+│   │   ├── DonationDetailRepository.php
+│   │   ├── DonationRepository.php
+│   │   └── UserRepository.php
+│   └── Services/              # Business Logic Services
+│       ├── AdminDashboardService.php
+│       ├── AuthService.php
+│       ├── CampaignService.php
+│       ├── DonationDetailService.php
+│       ├── DonationService.php
+│       ├── EmailService.php
+│       ├── PaymentResult.php
+│       ├── PaymentService.php
+│       └── UserService.php
+├── bootstrap/                 # Application Bootstrap
+│   ├── app.php
+│   ├── cache/
+│   └── providers.php
+├── config/                    # Configuration Files
+│   ├── app.php
+│   ├── auth.php
+│   ├── cache.php
+│   ├── database.php
+│   ├── filesystems.php
+│   ├── logging.php
+│   ├── mail.php
+│   ├── queue.php
+│   ├── sanctum.php
+│   ├── services.php
+│   └── session.php
 ├── database/
-│   ├── migrations/             # Database Migrations
+│   ├── factories/             # Model Factories
+│   │   ├── CampaignFactory.php
+│   │   ├── DonationDetailFactory.php
+│   │   ├── DonationFactory.php
+│   │   ├── RoleFactory.php
+│   │   └── UserFactory.php
+│   ├── migrations/            # Database Migrations
+│   │   ├── 0001_01_01_000000_create_users_table.php
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   ├── 2025_07_28_210945_create_roles_table.php
+│   │   ├── 2025_07_28_210946_add_employee_fields_to_users_table.php
+│   │   ├── 2025_07_28_211005_create_campaigns_table.php
+│   │   ├── 2025_07_28_211012_create_donations_table.php
+│   │   ├── 2025_07_28_211015_create_donation_details_table.php
+│   │   └── 2025_07_29_065421_create_personal_access_tokens_table.php
 │   └── seeders/               # Database Seeders
+│       └── DatabaseSeeder.php
+├── public/                    # Public Assets
+│   ├── build/                 # Compiled Assets
+│   ├── favicon.ico
+│   ├── index.php
+│   └── robots.txt
 ├── resources/
-│   ├── js/
+│   ├── css/                   # Stylesheets
+│   │   └── app.css
+│   ├── js/                    # Frontend JavaScript
 │   │   ├── components/        # Vue Components
-│   │   ├── router/           # Vue Router
-│   │   ├── stores/           # Pinia Stores
-│   │   └── views/            # Vue Views
-│   └── views/                # Blade Templates
-├── routes/
-│   ├── api.php               # API Routes
-│   └── web.php               # Web Routes
-└── tests/                    # Test Files
+│   │   ├── composables/       # Vue Composables
+│   │   ├── router/            # Vue Router
+│   │   ├── stores/            # Pinia Stores
+│   │   ├── views/             # Vue Views
+│   │   ├── app.js
+│   │   ├── App.vue
+│   │   └── bootstrap.js
+│   └── views/                 # Blade Templates
+│       ├── emails/            # Email Templates
+│       └── welcome.blade.php
+├── routes/                    # Route Definitions
+│   ├── api.php                # API Routes
+│   ├── console.php            # Console Routes
+│   └── web.php                # Web Routes
+├── storage/                   # Application Storage
+│   ├── app/                   # Application Files
+│   ├── framework/             # Framework Files
+│   └── logs/                  # Log Files
+├── tests/                     # Test Files
+│   ├── Feature/               # Feature Tests
+│   ├── Unit/                  # Unit Tests
+│   │   ├── CampaignTest.php
+│   │   ├── DonationDetailTest.php
+│   │   ├── DonationTest.php
+│   │   └── UserTest.php
+│   ├── Pest.php
+│   └── TestCase.php
+├── artisan                    # Laravel Artisan CLI
+├── composer.json              # PHP Dependencies
+├── composer.lock              # PHP Dependencies Lock
+├── docker-compose.yml         # Docker Configuration
+├── package.json               # Node.js Dependencies
+├── package-lock.json          # Node.js Dependencies Lock
+├── phpstan.neon              # PHPStan Configuration
+├── phpunit.xml               # PHPUnit Configuration
+├── README.md                 # Project Documentation
+├── setup.sh                  # Setup Script
+├── tailwind.config.js        # Tailwind CSS Configuration
+└── vite.config.js            # Vite Configuration
 ```
 
 ## 🔧 Configuration
