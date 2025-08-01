@@ -14,7 +14,7 @@ A Corporate Social Responsibility (CSR) platform built for ACME Corp to enable e
 ## 🛠️ Tech Stack
 
 ### Backend
-- **PHP 8.2+** with Laravel 11
+- **PHP 8.2+** with Laravel 12
 - **MySQL** database
 - **Laravel Sanctum** for API authentication
 - **Composer** for dependency management
