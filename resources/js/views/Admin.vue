@@ -283,7 +283,7 @@
                           <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
                             <div 
                               class="bg-green-600 h-2 rounded-full" 
-                              :style="{ width: Math.min(campaign.progress, 100) + '%' }"
+                              :style="{ width: campaign.progress + '%' }"
                             ></div>
                           </div>
                           <span class="text-sm text-gray-900">{{ campaign.progress }}%</span>

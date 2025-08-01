@@ -102,14 +102,4 @@ class UpsertCampaignRequest extends FormRequest
             'category' => 'Category',
         ];
     }
-
-    protected function prepareForValidation(): void
-    {
-        // Trim whitespace from string fields
-        $this->merge([
-            'title' => trim($this->title),
-            'description' => trim($this->description),
-            'category' => $this->category ? trim($this->category) : null,
-        ]);
-    }
 } 

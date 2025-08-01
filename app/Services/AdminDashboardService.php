@@ -11,6 +11,9 @@ class AdminDashboardService
         protected AdminDashboardRepositoryInterface $adminDashboardRepository
     ) {}
 
+    /**
+     * Get dashboard data for admin
+     */
     public function getDashboardData()
     {
         return $this->adminDashboardRepository->getDashboardData();

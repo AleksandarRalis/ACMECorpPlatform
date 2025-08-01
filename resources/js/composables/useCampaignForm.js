@@ -66,34 +66,34 @@ export function useCampaignForm() {
   };
 
   const validateForm = () => {
-    const errors = [];
+    const errors = {};
     
     if (!form.value.title.trim()) {
-      errors.push('Campaign title is required');
+      errors.title = 'Campaign title is required';
     }
     
     if (!form.value.description.trim()) {
-      errors.push('Campaign description is required');
+      errors.description = 'Campaign description is required';
     }
     
     if (!form.value.category) {
-      errors.push('Please select a category');
+      errors.category = 'Please select a category';
     }
     
     if (!form.value.goal || form.value.goal <= 0) {
-      errors.push('Please enter a valid funding goal');
+      errors.goal = 'Please enter a valid funding goal';
     }
     
     if (!form.value.start_date) {
-      errors.push('Start date is required');
+      errors.start_date = 'Start date is required';
     }
     
     if (!form.value.end_date) {
-      errors.push('End date is required');
+      errors.end_date = 'End date is required';
     }
     
     if (form.value.start_date && form.value.end_date && form.value.start_date >= form.value.end_date) {
-      errors.push('End date must be after start date');
+      errors.end_date = 'End date must be after start date';
     }
     
     return errors;

@@ -11,6 +11,9 @@ class DummyPaymentGateway implements PaymentGatewayInterface
 {
     public function authorizePayment() {}
 
+    /**
+     * Process the payment.
+     */
     public function processPayment(DonationDTO $donationDTO): PaymentResult
     {
         // Example: Call external API (e.g., PayPal)

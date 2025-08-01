@@ -16,11 +16,17 @@ class PaymentService
         protected DonationDetailService $donationDetailService,
     ) {}
 
-    public function processPayment(DonationDTO $donationDTO, int $donorId): PaymentResult
+    /**
+     * Process the payment.
+     */
+    public function processPayment(DonationDTO $donationDTO): PaymentResult
     {
         return $this->paymentGateway->processPayment($donationDTO);
     }
 
+    /**
+     * Process the donation.
+     */
     public function processDonation(DonationDTO $donationDTO, PaymentResult $paymentResult, int $donorId): Donation
     {
         return DB::transaction(function () use ($donationDTO, $paymentResult, $donorId){

@@ -29,7 +29,6 @@ class CampaignResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             
-            // Include creator information if relationship is loaded
             'created_by' => $this->whenLoaded('createdBy', function () {
                 return [
                     'id' => $this->createdBy->id,
@@ -48,12 +47,8 @@ class CampaignResource extends JsonResource
                 });
             }),
             
-            // Computed fields
-            'progress_percentage' => round(($this->current_amount / $this->goal_amount) * 100, 2),
-            
+            'progress_percentage' => min(round(($this->current_amount / $this->goal_amount) * 100, 2), 100),
             'days_left' => (int) max(0, now()->diffInDays(\Carbon\Carbon::parse($this->end_date))),
-
-            // Count fields
             'donations_count' => $this->donations_count ?? $this->donations()->count(),
 
         ];

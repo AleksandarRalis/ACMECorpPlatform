@@ -20,14 +20,14 @@ use App\Http\Controllers\Api\UsersController;
 */
 
 // Public routes
-Route::post('/auth/register', [AuthController::class, 'store']);
+Route::post('/auth/register', [UsersController::class, 'store']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/auth/logout', [AuthController::class, 'logout']);
-    Route::get('/auth/user', [AuthController::class, 'user']);
+    Route::get('/auth/user', [UsersController::class, 'user']);
 
     // Campaign routes
     Route::get('/campaigns', [CampaignsController::class, 'index']);
@@ -55,6 +55,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/admin/campaigns/{campaign}', [CampaignsController::class, 'destroy']);
         Route::post('/admin/campaigns/{campaign}/activate', [CampaignsController::class, 'activate']);
         Route::get('/admin/campaigns/all', [CampaignsController::class, 'listAll']);
+        
+        // Admin donation management routes
+        Route::get('/donations/stats', [DonationsController::class, 'getStatsForDonationsManagement']);
         
         // Admin user management routes
         Route::get('/admin/users', [UsersController::class, 'index']);

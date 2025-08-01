@@ -8,6 +8,9 @@ use App\Interfaces\DonationDetailRepositoryInterface;
 
 class DonationDetailRepository implements DonationDetailRepositoryInterface
 {
+    /**
+     * Create a donation detail.
+     */
     public function create(DonationDetailDTO $donationDetailDTO): DonationDetail
     {
         return DonationDetail::create($donationDetailDTO->toArray());

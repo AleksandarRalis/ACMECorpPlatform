@@ -53,14 +53,4 @@ class DonationConfirmation extends Mailable implements ShouldQueue
             ],
         );
     }
-
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
-    public function attachments(): array
-    {
-        return [];
-    }
 } 

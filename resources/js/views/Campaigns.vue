@@ -22,6 +22,7 @@
               type="text"
               placeholder="Search by title, description..."
               class="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              @input="debounceSearch"
             />
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,6 +41,7 @@
             id="category"
             v-model="selectedCategory"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            @change="fetchCampaigns"
           >
             <option value="">All Categories</option>
             <option value="environment">Environment</option>
@@ -61,6 +63,7 @@
             id="sort"
             v-model="sortBy"
             class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            @change="applySorting"
           >
             <option value="newest">Newest First</option>
             <option value="oldest">Oldest First</option>
@@ -75,7 +78,7 @@
       <!-- Search Results Info -->
       <div class="mt-4 flex justify-between items-center text-sm text-gray-600">
         <span>
-          Showing {{ filteredCampaigns.length }} of {{ campaigns.length }} campaigns
+          Showing {{ campaigns.length }} campaigns
         </span>
         <button
           v-if="searchQuery || selectedCategory || sortBy !== 'newest'"
@@ -99,8 +102,8 @@
     </div>
 
     <!-- Campaigns Grid -->
-    <div v-else-if="filteredCampaigns.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="campaign in filteredCampaigns" :key="campaign.id" class="bg-white rounded-lg shadow-md overflow-hidden">
+    <div v-else-if="campaigns.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div v-for="campaign in campaigns" :key="campaign.id" class="bg-white rounded-lg shadow-md overflow-hidden">
         <!-- Campaign Image -->
         <div class="h-48 bg-gray-200 overflow-hidden">
           <img 
@@ -161,31 +164,37 @@
 
 <script setup>
 import axios from 'axios';
-import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
-
-const route = useRoute();
+import { ref, onMounted, watch } from 'vue';
 const searchQuery = ref('');
 const selectedCategory = ref('');
 const sortBy = ref('newest');
 const campaigns = ref([]);
 const loading = ref(false);
+let searchTimeout = null;
 
-// Handle search query from URL
+// Initialize
 onMounted(async () => {
-  if (route.query.search) {
-    searchQuery.value = route.query.search;
-  }
-  
-  // Fetch campaigns from API
   await fetchCampaigns();
 });
 
 const fetchCampaigns = async () => {
   loading.value = true;
   try {
-    const response = await axios.get('/api/campaigns');
-    campaigns.value = response.data.data
+    const params = {};
+    
+    if (searchQuery.value) {
+      params.search = searchQuery.value;
+    }
+    
+    if (selectedCategory.value) {
+      params.category = selectedCategory.value;
+    }
+    
+    const response = await axios.get('/api/campaigns', { params });
+    campaigns.value = response.data.data;
+    
+    // Apply sorting on the frontend
+    applySorting();
   } catch (error) {
     console.error('Error fetching campaigns:', error);
     campaigns.value = [];
@@ -194,25 +203,10 @@ const fetchCampaigns = async () => {
   }
 };
 
-const filteredCampaigns = computed(() => {
-  let filtered = campaigns.value || [];
-
-  // Search by title and description
-  if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    filtered = filtered.filter(campaign => 
-      campaign.title.toLowerCase().includes(query) ||
-      campaign.description.toLowerCase().includes(query)
-    );
-  }
-
-  // Filter by category
-  if (selectedCategory.value) {
-    filtered = filtered.filter(campaign => campaign.category === selectedCategory.value);
-  }
-
-  // Sort campaigns
-  filtered = [...filtered].sort((a, b) => {
+const applySorting = () => {
+  if (!campaigns.value || campaigns.value.length === 0) return;
+  
+  campaigns.value.sort((a, b) => {
     switch (sortBy.value) {
       case 'newest':
         return new Date(b.created_at) - new Date(a.created_at);
@@ -223,37 +217,33 @@ const filteredCampaigns = computed(() => {
       case 'goal-low':
         return a.goal_amount - b.goal_amount;
       case 'progress':
-        return (b.current_amount / b.goal_amount) - (a.current_amount / a.goal_amount);
+        return b.progress_percentage - a.progress_percentage;
       case 'deadline':
-        return daysLeft(a) - daysLeft(b);
+        return new Date(a.end_date) - new Date(b.end_date);
       default:
-        return 0;
+        return new Date(b.created_at) - new Date(a.created_at);
     }
   });
-
-  return filtered;
-});
-
-const progressPercentage = (campaign) => {
-  return Math.min((campaign.current_amount / campaign.goal_amount) * 100, 100);
 };
 
-const daysLeft = (campaign) => {
-  const today = new Date();
-  const endDate = new Date(campaign.end_date);
-  const timeDiff = endDate.getTime() - today.getTime();
-  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
-  
-  if (daysDiff < 0) {
-    return 0;
-  }
-  
-  return daysDiff;
+const debounceSearch = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    fetchCampaigns();
+  }, 500);
 };
 
 const clearFilters = () => {
   searchQuery.value = '';
   selectedCategory.value = '';
   sortBy.value = 'newest';
+  fetchCampaigns();
 };
+
+// Watch for changes in sortBy and apply sorting
+watch(sortBy, () => {
+  if (campaigns.value && campaigns.value.length > 0) {
+    applySorting();
+  }
+});
 </script> 

@@ -48,11 +48,4 @@ class InsertDonationRequest extends FormRequest
             'message' => 'Message',
         ];
     }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'message' => $this->message ? trim($this->message) : null,
-        ]);
-    }
 }

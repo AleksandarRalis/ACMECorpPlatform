@@ -15,11 +15,17 @@ class PaymentResult
         public readonly ?string $failed_reason = null
     ) {}
 
+    /**
+     * Check if the payment is successful.
+     */
     public function isSuccessful(): bool
     {
         return $this->payment_status;
     }
 
+    /**
+     * Get the error message.
+     */
     public function getErrorMessage(): ?string
     {
         return $this->failed_reason;

@@ -29,6 +29,7 @@ A Corporate Social Responsibility (CSR) platform built for ACME Corp to enable e
 - **Axios** for HTTP requests
 
 ### Development Tools
+- **Laravel Sail** for Docker-based development environment
 - **Pest** for testing
 - **PHPStan** for static analysis
 - **Composer** for PHP dependencies
@@ -36,13 +37,143 @@ A Corporate Social Responsibility (CSR) platform built for ACME Corp to enable e
 
 ## 📋 Prerequisites
 
+### Option 1: Laravel Sail (Recommended)
+- **Docker Desktop** installed and running
+- **Git**
+
+### Option 2: Local Development
 - PHP 8.2 or higher
 - Composer
 - Node.js 18+ and NPM
 - MySQL 8.0+
 - Git
 
-## 🚀 Quick Start
+## 🚀 Quick Start with Laravel Sail (Recommended)
+
+Laravel Sail provides a Docker-based development environment that includes all necessary services (PHP, MySQL, Redis, Mailpit) out of the box.
+
+### 1. Clone the Repository
+```bash
+git clone <your-repo-url>
+cd AcmeCORP
+```
+
+### 2. Start Laravel Sail
+```bash
+# Start all services (Laravel, MySQL, Redis, Mailpit)
+./vendor/bin/sail up -d
+```
+
+**Note**: If you encounter port conflicts (e.g., port 80 or 3306 already in use), you may need to stop local services:
+```bash
+# Stop local MySQL if running
+sudo systemctl stop mysql
+
+# Stop local Apache/Nginx if running
+sudo systemctl stop apache2
+# or
+sudo systemctl stop nginx
+```
+
+### 3. Install Dependencies
+```bash
+# Install PHP dependencies
+./vendor/bin/sail composer install
+
+# Install Node.js dependencies
+./vendor/bin/sail npm install
+```
+
+### 4. Environment Setup
+```bash
+# Copy environment file (if not already done)
+cp .env.example .env
+
+# Generate application key
+./vendor/bin/sail artisan key:generate
+```
+
+### 5. Database Setup
+```bash
+# Run migrations
+./vendor/bin/sail artisan migrate
+
+# Seed the database with sample data
+./vendor/bin/sail artisan db:seed
+```
+
+### 6. Build Frontend Assets
+```bash
+# Build for production
+./vendor/bin/sail npm run build
+
+# Or run in development mode with hot reload
+./vendor/bin/sail npm run dev
+```
+
+### 7. Access the Application
+
+Your application is now running at:
+- **Main Application**: http://localhost
+- **Vite Dev Server**: http://localhost:5173 (if running `npm run dev`)
+- **Mailpit (Email Testing)**: http://localhost:8025
+
+## 🐳 Laravel Sail Commands
+
+### Basic Commands
+```bash
+# Start all services
+./vendor/bin/sail up -d
+
+# Stop all services
+./vendor/bin/sail down
+
+# View running containers
+./vendor/bin/sail ps
+
+# View logs
+./vendor/bin/sail logs
+```
+
+### Development Commands
+```bash
+# Run Laravel Artisan commands
+./vendor/bin/sail artisan migrate
+./vendor/bin/sail artisan db:seed
+./vendor/bin/sail artisan make:controller MyController
+
+# Run Composer commands
+./vendor/bin/sail composer install
+./vendor/bin/sail composer update
+
+# Run NPM commands
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run dev
+./vendor/bin/sail npm run build
+
+# Run tests
+./vendor/bin/sail test
+./vendor/bin/sail artisan test
+
+# Run PHPStan
+./vendor/bin/sail phpstan analyse
+```
+
+### Container Access
+```bash
+# Access Laravel container shell
+./vendor/bin/sail shell
+
+# Access MySQL
+./vendor/bin/sail mysql
+
+# Access Redis CLI
+./vendor/bin/sail redis
+```
+
+## 🚀 Quick Start (Local Development)
+
+If you prefer to run the application locally without Docker:
 
 ### 1. Clone the Repository
 ```bash
@@ -172,6 +303,16 @@ This design allows easy integration of real payment gateways (Stripe, PayPal, et
 
 ## 🧪 Testing
 
+### With Laravel Sail
+```bash
+# Run PHP tests with Pest
+./vendor/bin/sail test
+
+# Run PHPStan static analysis
+./vendor/bin/sail phpstan analyse
+```
+
+### Local Development
 ```bash
 # Run PHP tests with Pest
 ./vendor/bin/pest
@@ -214,18 +355,25 @@ Key environment variables in `.env`:
 APP_NAME="ACME Corp CSR Platform"
 APP_ENV=local
 APP_DEBUG=true
-APP_URL=http://localhost:8000
+APP_URL=http://localhost
 
 DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
+DB_HOST=mysql
 DB_PORT=3306
 DB_DATABASE=ACMECorp
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=sail
+DB_PASSWORD=password
 
-SANCTUM_STATEFUL_DOMAINS=localhost:8000
+SANCTUM_STATEFUL_DOMAINS=localhost
 SESSION_DOMAIN=localhost
 ```
+
+### Sail-Specific Configuration
+When using Laravel Sail, the following services are available:
+- **Laravel App**: http://localhost
+- **MySQL**: localhost:3306
+- **Redis**: localhost:6379
+- **Mailpit**: http://localhost:8025
 
 ## 🚀 Deployment
 

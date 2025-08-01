@@ -2,22 +2,28 @@
 
 namespace App\Services;
 
-use App\Interfaces\AuthRepositoryInterface;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Interfaces\UserRepositoryInterface;
 use Illuminate\Validation\ValidationException;
 
 class AuthService
 {
     public function __construct(
-        protected AuthRepositoryInterface $authRepository
+        protected UserRepositoryInterface $userRepository
     ) {}
 
+    /**
+     * Find a user by email
+     */
     public function findByEmail(string $email): ?User
     {
-        return $this->authRepository->findByEmail($email);
+        return $this->userRepository->findByEmail($email);
     }
 
+    /**
+     * Authenticate a user
+     */
     public function authenticate(string $email, string $password): User
     {
         if (!Auth::attempt(['email' => $email, 'password' => $password])) {
@@ -39,7 +45,7 @@ class AuthService
                 'email' => ['Your account has been deactivated.'],
             ]);
         }
-
+        $user->load('role');
         return $user;
     }
 } 

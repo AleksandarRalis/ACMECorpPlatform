@@ -53,11 +53,9 @@ class UpsertUserRequest extends FormRequest
             $rules['phone'] = ['nullable', 'string', 'max:255'];
             $rules['password'] = ['nullable', 'string', 'min:8'];
             $rules['password_confirmation'] = ['nullable', 'same:password'];
-            
-            // Add role and is_active for admin updates
-            $rules['role'] = ['nullable', 'string', 'in:employee,admin'];
-            $rules['is_active'] = ['nullable', 'boolean'];
-            $rules['employee_id'] = ['nullable', 'string', 'max:255'];
+            $rules['role'] = ['required', 'string', 'in:employee,admin'];
+            $rules['is_active'] = ['required', 'boolean'];
+            $rules['employee_id'] = ['required', 'string', 'max:255'];
         }
 
         return $rules;

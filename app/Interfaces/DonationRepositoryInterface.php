@@ -11,6 +11,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 interface DonationRepositoryInterface
 {
     public function list(array $filters): LengthAwarePaginator;
+    
+    public function getStats(): array;
 
     public function listDonationsByCampaign(Campaign $campaign): LengthAwarePaginator;
 

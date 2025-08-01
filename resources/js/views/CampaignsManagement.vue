@@ -41,7 +41,7 @@
                   <div class="w-16 bg-gray-200 rounded-full h-2 mr-2">
                     <div 
                       class="bg-green-600 h-2 rounded-full" 
-                      :style="{ width: Math.min(campaign.progress_percentage, 100) + '%' }"
+                      :style="{ width: campaign.progress_percentage + '%' }"
                     ></div>
                   </div>
                   <span class="text-sm text-gray-900">{{ campaign.progress_percentage }}%</span>
@@ -345,7 +345,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import axios from 'axios';
 
 // Props
@@ -384,6 +384,8 @@ const editForm = ref({
   image_url: '',
   status: 'active'
 });
+
+
 
 // Campaign actions
 const editCampaign = (campaign) => {

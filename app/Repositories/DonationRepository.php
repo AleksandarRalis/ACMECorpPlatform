@@ -39,6 +39,21 @@ class DonationRepository implements DonationRepositoryInterface
         return $query->paginate(10);
     }
 
+    public function getStats(): array
+    {
+        $stats = Donation::selectRaw('
+            COUNT(*) as total,
+            SUM(amount) as total_amount,
+            AVG(amount) as average_amount
+        ')->first();
+
+        return [
+            'total' => (int) $stats->total,
+            'totalAmount' => number_format($stats->total_amount ?? 0, 2),
+            'averageAmount' => number_format($stats->average_amount ?? 0, 2)
+        ];
+    }
+
     public function listDonationsByCampaign(Campaign $campaign): LengthAwarePaginator
     {
         return Donation::with('campaign', 'createdBy', 'details')->where('campaign_id', $campaign->id)->paginate(10);

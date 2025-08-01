@@ -9,7 +9,6 @@ use App\Interfaces\{
     DonationDetailRepositoryInterface,
     AdminDashboardRepositoryInterface,
     UserRepositoryInterface,
-    AuthRepositoryInterface,
 };
 use App\Repositories\{
     CampaignRepository,
@@ -17,7 +16,6 @@ use App\Repositories\{
     DonationDetailRepository,
     AdminDashboardRepository,
     UserRepository,
-    AuthRepository,
 };
 
 class RepositoryServiceProvider extends ServiceProvider
@@ -29,6 +27,5 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(DonationDetailRepositoryInterface::class, DonationDetailRepository::class);      
         $this->app->bind(AdminDashboardRepositoryInterface::class, AdminDashboardRepository::class);
         $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
-        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
     }
 }

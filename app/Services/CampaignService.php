@@ -19,11 +19,14 @@ class CampaignService
     /**
      * Get all campaigns with optional filters.
      */
-    public function list(): array
+    public function list(array $filters = []): array
     {
-        return CampaignResource::collection($this->campaignRepository->list())->response()->getData(true);
+        return CampaignResource::collection($this->campaignRepository->list($filters))->response()->getData(true);
     }
 
+    /**
+     * Get all campaigns for admin management
+     */
     public function listAll(): array
     {
         return CampaignResource::collection($this->campaignRepository->listAll())->response()->getData(true);
@@ -32,9 +35,9 @@ class CampaignService
     /**
      * Get campaigns created by a specific user.
      */
-    public function listByUser(User $user): Collection
+    public function listByUser(User $user, array $filters = []): Collection
     {
-        return $this->campaignRepository->listByUser($user);
+        return $this->campaignRepository->listByUser($user, $filters);
     }
 
     /**

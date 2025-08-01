@@ -12,6 +12,9 @@ class DonationDetailService
         protected DonationDetailRepositoryInterface $donationDetailRepository,
     ) {}
 
+    /**
+     * Create a new donation detail
+     */
     public function create(DonationDetailDTO $donationDetailDTO): DonationDetail
     {
         return $this->donationDetailRepository->create($donationDetailDTO);

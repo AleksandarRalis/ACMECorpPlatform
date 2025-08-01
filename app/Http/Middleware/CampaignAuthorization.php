@@ -4,8 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Campaign;
 
 class CampaignAuthorization
 {
@@ -19,14 +19,13 @@ class CampaignAuthorization
         $user = $request->user();
         
         if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return new JsonResponse(['message' => 'Unauthorized'], 401);
         }
 
-        // Get campaign from route parameter
         $campaign = $request->route('campaign');
         
         if (!$campaign) {
-            return response()->json(['message' => 'Campaign not found'], 404);
+            return new JsonResponse(['message' => 'Campaign not found'], 404);
         }
 
         // Only allow users to update or delete their own campaigns
@@ -34,6 +33,6 @@ class CampaignAuthorization
             return $next($request);
         }
         
-        return response()->json(['message' => 'You can only modify your own campaigns'], 403);
+            return new JsonResponse(['message' => 'You can only modify your own campaigns'], 403);
     }
 }

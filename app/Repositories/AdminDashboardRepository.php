@@ -9,6 +9,9 @@ use App\Interfaces\AdminDashboardRepositoryInterface;
 
 class AdminDashboardRepository implements AdminDashboardRepositoryInterface
 {
+    /**
+     * Get the dashboard data.
+     */
     public function getDashboardData(): array
     {
     
@@ -21,6 +24,9 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
         ];
     }
 
+    /**
+     * Get the overall statistics.
+     */
     public function getOverallStatistics(): array
     {
         $stats = [
@@ -41,6 +47,9 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
         return $stats;
     }
 
+    /**
+     * Get the recent campaigns.
+     */
     public function getRecentCampaigns(): array
     {
         return Campaign::with(['donations' => function ($query) {
@@ -54,7 +63,7 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
         ->map(function ($campaign) {
             $totalRaised = $campaign->donations->sum('amount');
             $progress = $campaign->goal_amount > 0 ? 
-                round(($totalRaised / $campaign->goal_amount) * 100, 1) : 0;
+                min(round(($totalRaised / $campaign->goal_amount) * 100, 1), 100) : 0;
             
             return [
                 'id' => $campaign->id,
@@ -70,6 +79,9 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
 
     }
 
+    /**
+     * Get the recent donations.
+     */
     public function getRecentDonations(): array
     {
         return Donation::with(['createdBy', 'campaign', 'details'])
@@ -92,6 +104,9 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
                 })->toArray();
     }
 
+    /**
+     * Get the monthly stats for the admin dashboard.
+     */
     public function getMonthlyStats(): array
     {
         $months = [];
@@ -129,6 +144,9 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
         ];
     }
 
+    /**
+     * Get the campaign performance for the admin dashboard.
+     */
     public function getCampaignPerformance(): array
     {
         return Campaign::with(['donations' => function ($query) {
@@ -141,7 +159,7 @@ class AdminDashboardRepository implements AdminDashboardRepositoryInterface
             $totalRaised = $campaign->donations->sum('amount');
             $donorCount = $campaign->donations->count();
             $progress = $campaign->goal_amount > 0 ? 
-                round(($totalRaised / $campaign->goal_amount) * 100, 1) : 0;
+                min(round(($totalRaised / $campaign->goal_amount) * 100, 1), 100) : 0;
             
             return [
                 'id' => $campaign->id,

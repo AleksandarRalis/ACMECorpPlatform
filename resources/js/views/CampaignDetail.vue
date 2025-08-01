@@ -103,16 +103,15 @@
                   <span>${{ campaign.goal_amount.toLocaleString() }}</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
-                  <div class="bg-green-600 h-3 rounded-full" :style="{ width: progressPercentage > 100 ? '100%' : progressPercentage + '%' }"></div>
+                  <div class="bg-green-600 h-3 rounded-full" :style="{ width: campaign.progress_percentage + '%' }"></div>
                 </div>
                 <div class="text-center mt-2">
-                  <span class="text-sm font-medium text-gray-900">{{ progressPercentage > 100 ? 100 : progressPercentage }}% Complete</span>
+                  <span class="text-sm font-medium text-gray-900">{{ campaign.progress_percentage }}% Complete</span>
                 </div>
               </div>
               
               <div class="text-sm text-gray-500">
                 <p>{{ campaign.days_left }} days remaining</p>
-                <!-- <p>{{ campaign.donors }} donors so far</p> -->
               </div>
             </div>
             
@@ -200,7 +199,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 
@@ -217,10 +216,7 @@ const donationAmount = ref(0);
 const transactionId = ref('');
 const errorMessage = ref('');
 
-const progressPercentage = computed(() => {
-  if (!campaign.value) return 0;
-  return campaign.value.progress_percentage || 0;
-});
+
 
 const isDonating = ref(false);
 

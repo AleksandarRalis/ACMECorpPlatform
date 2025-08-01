@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Collection;
 
 interface CampaignRepositoryInterface
 {
-    public function list(): LengthAwarePaginator;
+    public function list(array $filters = []): LengthAwarePaginator;
 
     public function listAll(): LengthAwarePaginator;
     
     public function show(int $id): ?Campaign;
 
-    public function listByUser(User $user): Collection;
+    public function listByUser(User $user, array $filters = []): Collection;
 
     public function create(CampaignDTO $campaignDTO): Campaign;
 

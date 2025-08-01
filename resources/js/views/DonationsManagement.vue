@@ -44,7 +44,7 @@
             </div>
             <div class="ml-4">
               <p class="text-sm font-medium text-gray-600">Total Amount</p>
-              <p class="text-2xl font-semibold text-gray-900">${{ (donationStats.totalAmount).toLocaleString() }}</p>
+              <p class="text-2xl font-semibold text-gray-900">${{ donationStats.totalAmount }}</p>
             </div>
           </div>
         </div>
@@ -74,6 +74,7 @@
               type="text" 
               placeholder="Search by donor name or campaign..."
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @input="debounceSearch"
             />
           </div>
           <div>
@@ -81,6 +82,7 @@
             <select 
               v-model="filters.campaign" 
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @change="applyFilters"
             >
               <option value="">All Campaigns</option>
               <option v-for="campaign in campaigns" :key="campaign.id" :value="campaign.title">
@@ -94,6 +96,7 @@
             <select 
               v-model="filters.month" 
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @change="applyFilters"
             >
               <option value="">All Months</option>
               <option v-for="month in availableMonths" :key="month.value" :value="month.value">
@@ -152,7 +155,7 @@
               <tr v-for="donation in donations" :key="donation.id" class="hover:bg-gray-50">
                 <td class="px-4 py-3 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ donation.createdBy.name }}</div>
-                  <div class="text-sm text-gray-500">{{ donation.created_by?.email }}</div>
+                  <div class="text-sm text-gray-500">{{ donation.createdBy?.email }}</div>
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap">
                   <div class="text-sm font-medium text-gray-900">{{ donation.campaign?.title }}</div>
@@ -218,17 +221,14 @@
               <!-- Page numbers -->
               <div class="flex space-x-1">
                 <button 
-                  v-for="page in getVisiblePages()" 
+                  v-for="page in Array.from({length: pagination.last_page}, (_, i) => i + 1)" 
                   :key="page"
                   @click="goToPage(page)"
-                  :disabled="page === '...'"
                   :class="[
                     'px-3 py-2 text-sm border rounded-md',
                     page === pagination.current_page
                       ? 'bg-blue-600 text-white border-blue-600'
-                      : page === '...'
-                        ? 'text-gray-400 border-gray-200 cursor-not-allowed'
-                        : 'text-gray-700 border-gray-300 hover:bg-gray-50'
+                      : 'text-gray-700 border-gray-300 hover:bg-gray-50'
                   ]"
                 >
                   {{ page }}
@@ -322,7 +322,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 
 // Reactive data
@@ -332,6 +332,8 @@ const donations = ref([]);
 const campaigns = ref([]);
 const selectedDonation = ref(null);
 const pagination = ref(null);
+const donationStats = ref({ total: 0, totalAmount: '0.00', averageAmount: '0.00' });
+let searchTimeout = null;
 
 // Filters
 const filters = ref({
@@ -341,39 +343,22 @@ const filters = ref({
 });
 
 // Static list of all 12 months
-const availableMonths = computed(() => {
-  const months = [
-    { value: '1', label: 'January' },
-    { value: '2', label: 'February' },
-    { value: '3', label: 'March' },
-    { value: '4', label: 'April' },
-    { value: '5', label: 'May' },
-    { value: '6', label: 'June' },
-    { value: '7', label: 'July' },
-    { value: '8', label: 'August' },
-    { value: '9', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
-  ];
-  
-  return months;
-});
+const availableMonths = [
+  { value: '1', label: 'January' },
+  { value: '2', label: 'February' },
+  { value: '3', label: 'March' },
+  { value: '4', label: 'April' },
+  { value: '5', label: 'May' },
+  { value: '6', label: 'June' },
+  { value: '7', label: 'July' },
+  { value: '8', label: 'August' },
+  { value: '9', label: 'September' },
+  { value: '10', label: 'October' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'December' }
+];
 
-// Computed stats based on donations data
-const donationStats = computed(() => {
-  if (!donations.value.length) return { total: 0, totalAmount: 0, averageAmount: 0 };
-  
-  const total = donations.value.length;
-  const totalAmount = donations.value.reduce((sum, donation) => sum + parseFloat(donation.amount), 0);
-  const averageAmount = totalAmount / total;
-  
-  return {
-    total,
-    totalAmount: totalAmount.toFixed(2),
-    averageAmount: averageAmount.toFixed(2)
-  };
-});
+
 
 // Fetch donations
 const fetchDonations = async (page = 1) => {
@@ -404,6 +389,17 @@ const fetchDonations = async (page = 1) => {
   }
 };
 
+// Fetch donation statistics
+const fetchDonationStats = async () => {
+  try {
+    const response = await axios.get('/api/donations/stats');
+    donationStats.value = response.data;
+  } catch (err) {
+    console.error('Error fetching donation stats:', err);
+    donationStats.value = { total: 0, totalAmount: '0.00', averageAmount: '0.00' };
+  }
+};
+
 // Fetch campaigns for filter
 const fetchCampaigns = async () => {
   try {
@@ -412,6 +408,14 @@ const fetchCampaigns = async () => {
   } catch (err) {
     console.error('Error fetching campaigns:', err);
   }
+};
+
+// Debounced search function
+const debounceSearch = () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    fetchDonations(1);
+  }, 500);
 };
 
 // Apply filters
@@ -448,47 +452,7 @@ const goToPage = (page) => {
   }
 };
 
-// Get visible page numbers for pagination
-const getVisiblePages = () => {
-  if (!pagination.value) return [];
-  
-  const totalPages = pagination.value.last_page;
-  const current = pagination.value.current_page;
-  
-  if (totalPages <= 7) {
-    // Show all pages if 7 or fewer
-    return Array.from({ length: totalPages }, (_, i) => i + 1);
-  }
-  
-  // Show current page, 2 before, 2 after, and first/last
-  const pages = [];
-  
-  // Always show first page
-  pages.push(1);
-  
-  // Show pages around current
-  const start = Math.max(2, current - 2);
-  const end = Math.min(totalPages - 1, current + 2);
-  
-  if (start > 2) {
-    pages.push('...');
-  }
-  
-  for (let i = start; i <= end; i++) {
-    pages.push(i);
-  }
-  
-  if (end < totalPages - 1) {
-    pages.push('...');
-  }
-  
-  // Always show last page if more than 1 page
-  if (totalPages > 1) {
-    pages.push(totalPages);
-  }
-  
-  return pages;
-};
+
 
 // View donation details
 const viewDonation = async (donation) => {
@@ -516,5 +480,6 @@ const formatTime = (dateString) => {
 onMounted(() => {
   fetchDonations();
   fetchCampaigns();
+  fetchDonationStats();
 });
 </script> 

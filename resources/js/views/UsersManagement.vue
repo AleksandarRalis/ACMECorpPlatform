@@ -61,7 +61,6 @@
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="user in users" :key="user.id">
-              {{ console.log(user) }}
               <td class="px-6 py-4 whitespace-nowrap">
                 <div class="flex items-center">
                   <div class="flex-shrink-0 h-10 w-10">
@@ -143,104 +142,132 @@
           <form @submit.prevent="updateUser" class="space-y-4">
             <!-- Name -->
             <div>
-              <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+              <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Name</label>
               <input
                 id="name"
                 v-model="editForm.name"
                 type="text"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.name ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
                 placeholder="Enter user name"
               />
+              <p v-if="fieldErrors.name" class="mt-1 text-sm text-red-600">{{ fieldErrors.name }}</p>
             </div>
 
             <!-- Email -->
             <div>
-              <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
               <input
                 id="email"
                 v-model="editForm.email"
                 type="email"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.email ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
                 placeholder="Enter user email"
               />
+              <p v-if="fieldErrors.email" class="mt-1 text-sm text-red-600">{{ fieldErrors.email }}</p>
             </div>
 
             <!-- Employee ID -->
             <div>
-              <label for="employee_id" class="block text-sm font-medium text-gray-700 mb-1">Employee ID</label>
+              <label for="employee_id" class="block text-sm font-medium text-gray-700 mb-2">Employee ID</label>
               <input
                 id="employee_id"
                 v-model="editForm.employee_id"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.employee_id ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
                 placeholder="Enter employee ID"
               />
+              <p v-if="fieldErrors.employee_id" class="mt-1 text-sm text-red-600">{{ fieldErrors.employee_id }}</p>
             </div>
 
             <!-- Department -->
             <div>
-              <label for="department" class="block text-sm font-medium text-gray-700 mb-1">Department</label>
+              <label for="department" class="block text-sm font-medium text-gray-700 mb-2">Department</label>
               <input
                 id="department"
                 v-model="editForm.department"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.department ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
                 placeholder="Enter department"
               />
+              <p v-if="fieldErrors.department" class="mt-1 text-sm text-red-600">{{ fieldErrors.department }}</p>
             </div>
 
             <!-- Position -->
             <div>
-              <label for="position" class="block text-sm font-medium text-gray-700 mb-1">Position</label>
+              <label for="position" class="block text-sm font-medium text-gray-700 mb-2">Position</label>
               <input
                 id="position"
                 v-model="editForm.position"
                 type="text"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.position ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
                 placeholder="Enter position"
               />
+              <p v-if="fieldErrors.position" class="mt-1 text-sm text-red-600">{{ fieldErrors.position }}</p>
             </div>
 
             <!-- Phone -->
             <div>
-              <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label for="phone" class="block text-sm font-medium text-gray-700 mb-2">Phone</label>
               <input
                 id="phone"
                 v-model="editForm.phone"
                 type="tel"
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.phone ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
                 placeholder="Enter phone number"
               />
+              <p v-if="fieldErrors.phone" class="mt-1 text-sm text-red-600">{{ fieldErrors.phone }}</p>
             </div>
 
             <!-- Role -->
             <div>
-              <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <label for="role" class="block text-sm font-medium text-gray-700 mb-2">Role</label>
               <select
                 id="role"
                 v-model="editForm.role"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.role ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
               >
                 <option value="employee">Employee</option>
                 <option value="admin">Admin</option>
               </select>
+              <p v-if="fieldErrors.role" class="mt-1 text-sm text-red-600">{{ fieldErrors.role }}</p>
             </div>
 
             <!-- Status -->
             <div>
-              <label for="is_active" class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label for="is_active" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
               <select
                 id="is_active"
                 v-model="editForm.is_active"
-                required
-                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                :class="[
+                  'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                  fieldErrors.is_active ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+                ]"
               >
                 <option :value="true">Active</option>
                 <option :value="false">Inactive</option>
               </select>
+              <p v-if="fieldErrors.is_active" class="mt-1 text-sm text-red-600">{{ fieldErrors.is_active }}</p>
             </div>
 
             <!-- Password -->
@@ -259,9 +286,21 @@
               <p class="text-xs text-gray-500 mt-1">Only fill this field if you want to change the password</p>
             </div>
 
-            <!-- Error Message -->
-            <div v-if="editError" class="bg-red-50 border border-red-200 rounded-lg p-3">
-              <p class="text-sm text-red-700">{{ editError }}</p>
+            <!-- API Error Message -->
+            <div v-if="editError" class="bg-red-50 border border-red-200 rounded-lg p-4">
+              <div class="flex">
+                <div class="flex-shrink-0">
+                  <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                  </svg>
+                </div>
+                <div class="ml-3">
+                  <h3 class="text-sm font-medium text-red-800">Update Error</h3>
+                  <div class="mt-2 text-sm text-red-700">
+                    <p>{{ editError }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <!-- Form Actions -->
@@ -347,7 +386,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import axios from 'axios';
 
 // Emits
@@ -363,6 +402,7 @@ const showDeleteModal = ref(false);
 const editLoading = ref(false);
 const deleteLoading = ref(false);
 const editError = ref('');
+const fieldErrors = ref({});
 const successMessage = ref('');
 const userToDelete = ref(null);
 
@@ -397,15 +437,7 @@ const fetchUsers = async () => {
   }
 };
 
-// Format date helper
-const formatDate = (dateString) => {
-  if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  });
-};
+
 
 // User actions
 const editUser = (user) => {
@@ -442,6 +474,7 @@ const closeEditModal = () => {
     password: ''
   };
   editError.value = '';
+  fieldErrors.value = {};
 };
 
 const closeSuccessModal = () => {
@@ -455,9 +488,19 @@ const closeDeleteModal = () => {
 };
 
 const updateUser = async () => {
+  // Clear previous errors
+  editError.value = '';
+  fieldErrors.value = {};
+  
+  // Validate form
+  const errors = validateEditForm();
+  if (Object.keys(errors).length > 0) {
+    fieldErrors.value = errors;
+    return;
+  }
+  
   try {
     editLoading.value = true;
-    editError.value = '';
     
     // Prepare the request data
     const requestData = {
@@ -494,6 +537,57 @@ const updateUser = async () => {
   }
 };
 
+// Form validation
+function validateEditForm() {
+  const errors = {};
+  
+  if (!editForm.value.name.trim()) {
+    errors.name = 'Name is required';
+  }
+  
+  if (!editForm.value.email.trim()) {
+    errors.email = 'Email is required';
+  } else if (!isValidEmail(editForm.value.email)) {
+    errors.email = 'Please enter a valid email address';
+  }
+  
+  if (!editForm.value.employee_id.trim()) {
+    errors.employee_id = 'Employee ID is required';
+  }
+  
+  if (!editForm.value.department.trim()) {
+    errors.department = 'Department is required';
+  }
+  
+  if (!editForm.value.position.trim()) {
+    errors.position = 'Position is required';
+  }
+  
+  if (!editForm.value.phone.trim()) {
+    errors.phone = 'Phone number is required';
+  }
+  
+  if (!editForm.value.role) {
+    errors.role = 'Role is required';
+  }
+  
+  if (editForm.value.is_active === undefined || editForm.value.is_active === null) {
+    errors.is_active = 'Status is required';
+  }
+  
+  if (editForm.value.password && editForm.value.password.trim() !== '' && editForm.value.password.length < 8) {
+    errors.password = 'Password must be at least 8 characters long';
+  }
+  
+  return errors;
+}
+
+// Email validation helper
+function isValidEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
 const deleteUser = (user) => {
   userToDelete.value = user;
   showDeleteModal.value = true;
@@ -523,6 +617,88 @@ const confirmDelete = async () => {
     deleteLoading.value = false;
   }
 };
+
+// Watch for form changes to clear field errors
+watch(() => editForm.value.name, () => {
+  if (fieldErrors.value.name) {
+    delete fieldErrors.value.name;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.email, () => {
+  if (fieldErrors.value.email) {
+    delete fieldErrors.value.email;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.employee_id, () => {
+  if (fieldErrors.value.employee_id) {
+    delete fieldErrors.value.employee_id;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.department, () => {
+  if (fieldErrors.value.department) {
+    delete fieldErrors.value.department;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.position, () => {
+  if (fieldErrors.value.position) {
+    delete fieldErrors.value.position;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.phone, () => {
+  if (fieldErrors.value.phone) {
+    delete fieldErrors.value.phone;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.role, () => {
+  if (fieldErrors.value.role) {
+    delete fieldErrors.value.role;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.is_active, () => {
+  if (fieldErrors.value.is_active) {
+    delete fieldErrors.value.is_active;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
+
+watch(() => editForm.value.password, () => {
+  if (fieldErrors.value.password) {
+    delete fieldErrors.value.password;
+  }
+  if (editError.value) {
+    editError.value = '';
+  }
+});
 
 // Load users on component mount
 onMounted(() => {

@@ -17,14 +17,19 @@ class CampaignsController extends Controller
     public function __construct(
         protected CampaignService $campaignService
     ) {}
+
     /**
      * Display a listing of campaigns.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        return new JsonResponse($this->campaignService->list());
+        $filters = $request->only(['search', 'category']);
+        return new JsonResponse($this->campaignService->list($filters));
     }
 
+    /** 
+     * List all campaigns admin only, active and inactive
+     */
     public function listAll(): JsonResponse
     {
         return new JsonResponse($this->campaignService->listAll());
@@ -37,7 +42,7 @@ class CampaignsController extends Controller
     {
         $campaignDTO = CampaignDTO::fromRequest($request);
         $campaign = $this->campaignService->create($campaignDTO);
-        return new JsonResponse($campaign);
+        return new JsonResponse($campaign, 201);
     }
 
     /**
@@ -79,10 +84,11 @@ class CampaignsController extends Controller
     /**
      * Get campaigns created by the authenticated user.
      */
-    public function myCampaigns(): JsonResponse
+    public function myCampaigns(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $campaigns = $this->campaignService->listByUser($user);
+        $filters = $request->only(['search', 'status']);
+        $campaigns = $this->campaignService->listByUser($user, $filters);
         return new JsonResponse(CampaignResource::collection($campaigns));
     }
 } 

@@ -15,9 +15,8 @@ class EmailService
     public function sendDonationConfirmationAsync(Donation $donation): bool
     {
         try {
-            // Load the relationships
             $donation->load(['createdBy', 'campaign', 'details']);
-            // Send the email asynchronously
+
             Mail::to($donation->createdBy->email)
                 ->queue(new DonationConfirmation($donation));
             

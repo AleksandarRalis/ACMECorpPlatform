@@ -12,4 +12,5 @@ interface UserRepositoryInterface
     public function create(UserDTO $userDTO): User;
     public function update(UserDTO $userDTO, User $user): User;
     public function destroy(User $user): void;
+    public function findByEmail(string $email): ?User;
 }

@@ -44,6 +44,23 @@
 
       <!-- Edit Form -->
       <form v-else @submit.prevent="updateCampaign" class="bg-white shadow-md rounded-lg p-6">
+        <!-- API Error Display -->
+        <div v-if="apiError" class="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              </svg>
+            </div>
+            <div class="ml-3">
+              <h3 class="text-sm font-medium text-red-800">Error</h3>
+              <div class="mt-2 text-sm text-red-700">
+                <p>{{ apiError }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <div class="space-y-6">
           <!-- Campaign Title -->
           <div>
@@ -54,10 +71,13 @@
               id="title"
               v-model="form.title"
               type="text"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :class="[
+                'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                fieldErrors.title ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              ]"
               placeholder="Enter campaign title"
             />
+            <p v-if="fieldErrors.title" class="mt-1 text-sm text-red-600">{{ fieldErrors.title }}</p>
           </div>
 
           <!-- Campaign Description -->
@@ -69,10 +89,13 @@
               id="description"
               v-model="form.description"
               rows="4"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :class="[
+                'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                fieldErrors.description ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              ]"
               placeholder="Describe your campaign and its goals"
             ></textarea>
+            <p v-if="fieldErrors.description" class="mt-1 text-sm text-red-600">{{ fieldErrors.description }}</p>
           </div>
 
           <!-- Campaign Category -->
@@ -83,14 +106,17 @@
             <select
               id="category"
               v-model="form.category"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :class="[
+                'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                fieldErrors.category ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              ]"
             >
               <option value="">Select a category</option>
               <option v-for="category in categories" :key="category.value" :value="category.value">
                 {{ category.label }}
               </option>
             </select>
+            <p v-if="fieldErrors.category" class="mt-1 text-sm text-red-600">{{ fieldErrors.category }}</p>
           </div>
 
           <!-- Funding Goal -->
@@ -103,10 +129,13 @@
               v-model.number="form.goal"
               type="number"
               min="1"
-              required
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :class="[
+                'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                fieldErrors.goal ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              ]"
               placeholder="Enter funding goal"
             />
+            <p v-if="fieldErrors.goal" class="mt-1 text-sm text-red-600">{{ fieldErrors.goal }}</p>
           </div>
 
           <!-- Start Date -->
@@ -118,10 +147,13 @@
               id="start_date"
               v-model="form.start_date"
               type="date"
-              required
               :min="minDate"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :class="[
+                'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                fieldErrors.start_date ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              ]"
             />
+            <p v-if="fieldErrors.start_date" class="mt-1 text-sm text-red-600">{{ fieldErrors.start_date }}</p>
           </div>
 
           <!-- End Date -->
@@ -133,10 +165,13 @@
               id="end_date"
               v-model="form.end_date"
               type="date"
-              required
               :min="form.start_date || minDate"
-              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              :class="[
+                'w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent',
+                fieldErrors.end_date ? 'border-red-300 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+              ]"
             />
+            <p v-if="fieldErrors.end_date" class="mt-1 text-sm text-red-600">{{ fieldErrors.end_date }}</p>
           </div>
 
           <!-- Campaign Image URL -->
@@ -151,25 +186,6 @@
               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               placeholder="https://example.com/image.jpg"
             />
-          </div>
-
-          <!-- Validation Errors -->
-          <div v-if="validationErrors.length > 0" class="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div class="flex">
-              <div class="flex-shrink-0">
-                <svg class="h-5 w-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                </svg>
-              </div>
-              <div class="ml-3">
-                <h3 class="text-sm font-medium text-red-800">Please fix the following errors:</h3>
-                <div class="mt-2 text-sm text-red-700">
-                  <ul class="list-disc pl-5 space-y-1">
-                    <li v-for="error in validationErrors" :key="error">{{ error }}</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
           </div>
 
           <!-- Submit Buttons -->
@@ -195,7 +211,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import axios from 'axios';
 import { useCampaignForm } from '../composables/useCampaignForm';
@@ -215,6 +231,8 @@ const {
 
 const initialLoading = ref(true);
 const error = ref('');
+const fieldErrors = ref({});
+const apiError = ref('');
 
 onMounted(async () => {
   await fetchCampaign();
@@ -236,13 +254,16 @@ const fetchCampaign = async () => {
   }
 };
 
-const validationErrors = ref([]);
-
 const updateCampaign = async () => {
-  // Clear previous validation errors
-  validationErrors.value = validateForm();
+  // Clear previous errors
+  fieldErrors.value = {};
+  apiError.value = '';
   
-  if (validationErrors.value.length > 0) {
+  // Validate form
+  const errors = validateForm();
+  
+  if (Object.keys(errors).length > 0) {
+    fieldErrors.value = errors;
     return;
   }
 
@@ -256,9 +277,49 @@ const updateCampaign = async () => {
     router.push('/campaigns/my');
   } catch (err) {
     console.error('Error updating campaign:', err);
-    alert(err.response?.data?.message || 'Error updating campaign. Please try again.');
+    apiError.value = err.response?.data?.message || 'Error updating campaign. Please try again.';
   } finally {
     loading.value = false;
   }
 };
+
+// Watch for form changes to clear field errors
+watch(() => form.title, () => {
+  if (fieldErrors.value.title) {
+    delete fieldErrors.value.title;
+  }
+  if (apiError.value) {
+    apiError.value = '';
+  }
+});
+
+watch(() => form.description, () => {
+  if (fieldErrors.value.description) {
+    delete fieldErrors.value.description;
+  }
+});
+
+watch(() => form.category, () => {
+  if (fieldErrors.value.category) {
+    delete fieldErrors.value.category;
+  }
+});
+
+watch(() => form.goal, () => {
+  if (fieldErrors.value.goal) {
+    delete fieldErrors.value.goal;
+  }
+});
+
+watch(() => form.start_date, () => {
+  if (fieldErrors.value.start_date) {
+    delete fieldErrors.value.start_date;
+  }
+});
+
+watch(() => form.end_date, () => {
+  if (fieldErrors.value.end_date) {
+    delete fieldErrors.value.end_date;
+  }
+});
 </script> 

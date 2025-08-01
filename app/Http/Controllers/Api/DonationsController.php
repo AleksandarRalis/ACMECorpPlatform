@@ -23,6 +23,7 @@ class DonationsController extends Controller
         protected DonationDetailService $donationDetailService,
         protected EmailService $emailService,
     ) {}
+    
     /**
      * Display a list of all donations.
      */
@@ -30,6 +31,14 @@ class DonationsController extends Controller
     {
         $filters = $request->only(['search', 'campaign', 'month']);
         return new JsonResponse($this->donationService->list($filters));
+    }
+
+    /**
+     * Get statistics for donations management dashboard.
+     */
+    public function getStatsForDonationsManagement(): JsonResponse 
+    {
+        return new JsonResponse($this->donationService->getStatsForDonationsManagement());
     }
 
     /**
@@ -41,17 +50,19 @@ class DonationsController extends Controller
         $donationDTO = DonationDTO::fromRequest($request, $campaign->id, $donorId);
 
         // Process payment
-        $paymentResult = $this->paymentService->processPayment($donationDTO, $donorId);
+        $paymentResult = $this->paymentService->processPayment($donationDTO);
 
+        //redunndant for now but will be used whit real payment gateway
         if (!$paymentResult->isSuccessful()) {
             return new JsonResponse(['error' => $paymentResult->getErrorMessage()], 422);
         }
+
         $donation = $this->paymentService->processDonation($donationDTO, $paymentResult, $donorId);
 
         // Send confirmation email
         $this->emailService->sendDonationConfirmationAsync($donation);
 
-        return new JsonResponse($donation);
+        return new JsonResponse($donation, 201);
     }
 
     /**
