@@ -57,7 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/admin/campaigns/all', [CampaignsController::class, 'listAll']);
         
         // Admin donation management routes
-        Route::get('/donations/stats', [DonationsController::class, 'getStatsForDonationsManagement']);
+        Route::get('/admin/donations/stats', [DonationsController::class, 'getStatsForDonationsManagement']);
         
         // Admin user management routes
         Route::get('/admin/users', [UsersController::class, 'index']);

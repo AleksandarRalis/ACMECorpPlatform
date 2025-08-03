@@ -30,7 +30,23 @@ class DonationService
      */
     public function getStatsForDonationsManagement(): array
     {
-        return $this->donationRepository->getStats();
+        $stats = $this->donationRepository->getStats();
+        
+        // Handle case when no donations exist
+        if (!$stats) {
+            return [
+                'total' => 0,
+                'totalAmount' => '0.00',
+                'averageAmount' => '0.00'
+            ];
+        }
+
+        return [
+            'total' => (int) $stats->total,
+            'totalAmount' => number_format($stats->total_amount ?? 0, 2),
+            'averageAmount' => number_format($stats->average_amount ?? 0, 2)
+        ];  
+
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Enums\UserRole;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -25,6 +26,11 @@ class AdminMiddleware
         // Check if user is admin
         if (!Auth::user()->isAdmin()) {
             return new JsonResponse(['message' => 'Access denied. Admin privileges required.'], 403);
+        }
+
+        // Check if admin is trying to become an employee
+        if(Auth::user()->isAdmin() && $request->role === UserRole::EMPLOYEE->value){
+            return new JsonResponse(['message' => 'Admin cannot be an employee'], 403);
         }
 
         return $next($request);

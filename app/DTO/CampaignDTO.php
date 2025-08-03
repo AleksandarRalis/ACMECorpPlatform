@@ -7,7 +7,7 @@ use App\Models\Campaign;
 use App\Enums\CampaignStatus;
 use App\Http\Requests\UpsertCampaignRequest;
 
-class CampaignDTO implements DTO
+class CampaignDTO
 {
     public function __construct(
         public string $title,

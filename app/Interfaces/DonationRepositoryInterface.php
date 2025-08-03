@@ -12,7 +12,7 @@ interface DonationRepositoryInterface
 {
     public function list(array $filters): LengthAwarePaginator;
     
-    public function getStats(): array;
+    public function getStats(): ?Donation;
 
     public function listDonationsByCampaign(Campaign $campaign): LengthAwarePaginator;
 

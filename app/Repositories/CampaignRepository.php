@@ -20,6 +20,7 @@ class CampaignRepository implements CampaignRepositoryInterface
          */
         $query = Campaign::with('createdBy')
             ->where('status', CampaignStatus::ACTIVE->value)
+            ->orWhere('status', CampaignStatus::COMPLETED->value)
             ->withCount('donations');
 
         if (!empty($filters['search'])) {

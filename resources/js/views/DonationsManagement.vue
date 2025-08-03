@@ -392,7 +392,7 @@ const fetchDonations = async (page = 1) => {
 // Fetch donation statistics
 const fetchDonationStats = async () => {
   try {
-    const response = await axios.get('/api/donations/stats');
+    const response = await axios.get('/api/admin/donations/stats');
     donationStats.value = response.data;
   } catch (err) {
     console.error('Error fetching donation stats:', err);

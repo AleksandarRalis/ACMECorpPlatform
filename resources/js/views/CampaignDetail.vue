@@ -87,7 +87,22 @@
         </div>
         
         <div class="p-8">
-          <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ campaign.title }}</h1>
+          <div class="flex items-center justify-between mb-4">
+            <h1 class="text-3xl font-bold text-gray-900">{{ campaign.title }}</h1>
+            <div class="flex items-center">
+              <span 
+                :class="[
+                  'px-3 py-1 rounded-full text-sm font-medium',
+                  campaign.status === 'active' ? 'bg-green-100 text-green-800' : '',
+                  campaign.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : '',
+                  campaign.status === 'completed' ? 'bg-blue-100 text-blue-800' : '',
+                  campaign.status === 'cancelled' ? 'bg-red-100 text-red-800' : ''
+                ]"
+              >
+                {{ campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1) }}
+              </span>
+            </div>
+          </div>
           <p class="text-gray-600 text-lg mb-6">{{ campaign.description }}</p>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
@@ -115,7 +130,7 @@
               </div>
             </div>
             
-            <div>
+            <div v-if="campaign.status === 'active'">
               <h3 class="text-lg font-semibold text-gray-900 mb-4">Make a Donation</h3>
               <form @submit.prevent="makeDonation" class="space-y-4">
                 <div>
@@ -177,6 +192,26 @@
                   <span v-else>Donate Now</span>
                 </button>
               </form>
+            </div>
+            
+            <!-- Message for non-active campaigns -->
+            <div v-else class="bg-gray-50 rounded-lg p-6 text-center">
+              <div class="flex items-center justify-center mb-4">
+                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </div>
+              <h3 class="text-lg font-medium text-gray-900 mb-2">
+                {{ campaign.status === 'pending' ? 'Campaign Pending' : 
+                   campaign.status === 'completed' ? 'Campaign Completed' : 
+                   campaign.status === 'cancelled' ? 'Campaign Cancelled' : 'Campaign Unavailable' }}
+              </h3>
+              <p class="text-gray-600">
+                {{ campaign.status === 'pending' ? 'This campaign is currently pending approval and donations are not yet accepted.' :
+                   campaign.status === 'completed' ? 'This campaign has been completed and is no longer accepting donations.' :
+                   campaign.status === 'cancelled' ? 'This campaign has been cancelled and is no longer accepting donations.' :
+                   'This campaign is inactive and currently unavailable for donations.' }}
+              </p>
             </div>
           </div>
           
