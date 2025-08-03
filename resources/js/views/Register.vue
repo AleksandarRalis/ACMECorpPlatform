@@ -209,9 +209,6 @@ async function handleRegister() {
       password: password.value,
       password_confirmation: password_confirmation.value,
     });
-
-    // Registration successful
-    console.log('Registration successful:', response.data);
     
     // Show success state
     success.value = true;
