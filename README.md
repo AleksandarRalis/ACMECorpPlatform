@@ -213,7 +213,26 @@ DB_USERNAME=your_username
 DB_PASSWORD=your_password
 ```
 
-### 5. Database Setup
+### 5. Mail Configuration
+For email testing in local development, you can configure Mailtrap:
+
+1. **Sign up for Mailtrap**: Visit [mailtrap.io](https://mailtrap.io) and create a free account
+2. **Create an Inbox**: Create a new inbox for your project
+3. **Get SMTP credentials**: Copy the SMTP settings from your Mailtrap inbox
+4. **Update .env file**:
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_mailtrap_username
+MAIL_PASSWORD=your_mailtrap_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS="noreply@acmecorp.com"
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+
+### 6. Database Setup
 ```bash
 # Run migrations
 php artisan migrate
@@ -222,7 +241,7 @@ php artisan migrate
 php artisan db:seed
 ```
 
-### 6. Build Frontend Assets
+### 7. Build Frontend Assets
 ```bash
 # Development
 npm run dev
@@ -231,7 +250,7 @@ npm run dev
 npm run build
 ```
 
-### 7. Start the Application
+### 8. Start the Application
 ```bash
 # Start Laravel development server
 php artisan serve
