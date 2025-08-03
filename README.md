@@ -58,7 +58,22 @@ git clone <your-repo-url>
 cd AcmeCORP
 ```
 
-### 2. Start Laravel Sail
+### 2. Install Dependencies
+```bash
+# Install PHP dependencies first (creates vendor folder)
+composer install
+
+# Install Node.js dependencies
+npm install
+```
+
+### 3. Environment Setup
+```bash
+# Copy environment file (required before starting Sail)
+cp .env.example .env
+```
+
+### 4. Start Laravel Sail
 ```bash
 # Start all services (Laravel, MySQL, Redis, Mailpit)
 ./vendor/bin/sail up -d
@@ -75,25 +90,13 @@ sudo systemctl stop apache2
 sudo systemctl stop nginx
 ```
 
-### 3. Install Dependencies
+### 5. Generate Application Key
 ```bash
-# Install PHP dependencies
-./vendor/bin/sail composer install
-
-# Install Node.js dependencies
-./vendor/bin/sail npm install
-```
-
-### 4. Environment Setup
-```bash
-# Copy environment file (if not already done)
-cp .env.example .env
-
 # Generate application key
 ./vendor/bin/sail artisan key:generate
 ```
 
-### 5. Database Setup
+### 6. Database Setup
 ```bash
 # Run migrations
 ./vendor/bin/sail artisan migrate
@@ -102,7 +105,7 @@ cp .env.example .env
 ./vendor/bin/sail artisan db:seed
 ```
 
-### 6. Build Frontend Assets
+### 7. Build Frontend Assets
 ```bash
 # Build for production
 ./vendor/bin/sail npm run build
