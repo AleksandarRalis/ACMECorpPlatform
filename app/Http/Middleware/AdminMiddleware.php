@@ -29,7 +29,7 @@ class AdminMiddleware
         }
 
         // Check if admin is trying to become an employee
-        if(Auth::user()->isAdmin() && $request->role === UserRole::EMPLOYEE->value){
+        if($request->route('user')?->isAdmin() && $request->role === UserRole::EMPLOYEE->value){
             return new JsonResponse(['message' => 'Admin cannot be an employee'], 403);
         }
 
