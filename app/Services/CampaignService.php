@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Campaign;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
 use App\Interfaces\CampaignRepositoryInterface;
 use App\DTO\CampaignDTO;
 use App\Http\Resources\CampaignResource;
